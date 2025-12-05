@@ -46,7 +46,7 @@
                                     <option value="{{ $plan->id }}" 
                                         data-price="{{ $plan->price }}" 
                                         data-duration="{{ $plan->duration_months }}"
-                                        {{ old('plan_id') == $plan->id ? 'selected' : '' }}>
+                                        {{ old('plan_id', $selectedPlanId ?? '') == $plan->id ? 'selected' : '' }}>
                                         {{ $plan->name }} - ₱{{ number_format($plan->price, 2) }} ({{ $plan->duration_months }} {{ $plan->duration_months == 1 ? 'month' : 'months' }})
                                     </option>
                                 @endforeach
@@ -184,6 +184,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    // Auto-fill if plan is pre-selected
+    if (planSelect.value) {
+        planSelect.dispatchEvent(new Event('change'));
+    }
 });
 </script>
 @endpush

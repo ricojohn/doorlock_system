@@ -1,0 +1,96 @@
+@extends('layout.app')
+
+@section('content')
+
+<div class="pagetitle">
+    <h1>Register RFID Card / Key Fob</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('rfid-cards.index') }}">RFID Cards</a></li>
+            <li class="breadcrumb-item active">Create</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Card / Key Fob Information</h5>
+
+                    <form action="{{ route('rfid-cards.store') }}" method="POST" class="row g-3">
+                        @csrf
+
+                        <div class="col-md-6">
+                            <label for="card_number" class="form-label">Card Number <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('card_number') is-invalid @enderror" id="card_number" name="card_number" value="{{ old('card_number') }}" placeholder="Enter card number" required>
+                            @error('card_number')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="form-text text-muted">Enter the unique RFID card or key fob number</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
+                            <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
+                                <option value="card" {{ old('type', 'card') == 'card' ? 'selected' : '' }}>RFID Card</option>
+                                <option value="keyfob" {{ old('type') == 'keyfob' ? 'selected' : '' }}>Key Fob</option>
+                            </select>
+                            @error('type')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
+                                <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                <option value="lost" {{ old('status') == 'lost' ? 'selected' : '' }}>Lost</option>
+                                <option value="stolen" {{ old('status') == 'stolen' ? 'selected' : '' }}>Stolen</option>
+                            </select>
+                            @error('status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="issued_at" class="form-label">Issued Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control @error('issued_at') is-invalid @enderror" id="issued_at" name="issued_at" value="{{ old('issued_at', now()->format('Y-m-d')) }}" required>
+                            @error('issued_at')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="expires_at" class="form-label">Expires Date (Optional)</label>
+                            <input type="date" class="form-control @error('expires_at') is-invalid @enderror" id="expires_at" name="expires_at" value="{{ old('expires_at') }}">
+                            @error('expires_at')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="form-text text-muted">Leave empty for no expiration</small>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" rows="3" placeholder="Additional notes about this card/key fob">{{ old('notes') }}</textarea>
+                            @error('notes')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Register Card / Key Fob</button>
+                            <a href="{{ route('rfid-cards.index') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@endsection
+

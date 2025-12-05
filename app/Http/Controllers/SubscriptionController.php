@@ -30,8 +30,9 @@ class SubscriptionController extends Controller
         $members = Member::orderBy('first_name')->orderBy('last_name')->get();
         $plans = Plan::where('is_active', true)->orderBy('name')->get();
         $selectedMemberId = request()->query('member_id');
+        $selectedPlanId = request()->query('plan_id');
 
-        return view('subscriptions.create', compact('members', 'plans', 'selectedMemberId'));
+        return view('subscriptions.create', compact('members', 'plans', 'selectedMemberId', 'selectedPlanId'));
     }
 
     /**
@@ -40,9 +41,9 @@ class SubscriptionController extends Controller
     public function store(StoreSubscriptionRequest $request): RedirectResponse
     {
         $data = $request->validated();
-        
+
         // If plan_id is provided, auto-fill plan_name and price from plan
-        if (!empty($data['plan_id'])) {
+        if (! empty($data['plan_id'])) {
             $plan = Plan::find($data['plan_id']);
             if ($plan) {
                 $data['plan_name'] = $plan->name;
@@ -85,9 +86,9 @@ class SubscriptionController extends Controller
     public function update(UpdateSubscriptionRequest $request, Subscription $subscription): RedirectResponse
     {
         $data = $request->validated();
-        
+
         // If plan_id is provided, auto-fill plan_name and price from plan
-        if (!empty($data['plan_id'])) {
+        if (! empty($data['plan_id'])) {
             $plan = Plan::find($data['plan_id']);
             if ($plan) {
                 $data['plan_name'] = $plan->name;
@@ -112,5 +113,23 @@ class SubscriptionController extends Controller
 
         return redirect()->route('subscriptions.index')
             ->with('success', 'Subscription deleted successfully.');
+    }
+
+    /**
+     * Renew a subscription for a member - redirects to create page to choose plan.
+     */
+    public function renew(Member $member): RedirectResponse
+    {
+        $latestSubscription = $member->subscriptions()->latest()->first();
+
+        $params = ['member_id' => $member->id];
+
+        // Pre-select the previous plan if it exists
+        if ($latestSubscription && $latestSubscription->plan_id) {
+            $params['plan_id'] = $latestSubscription->plan_id;
+        }
+
+        return redirect()->route('subscriptions.create', $params)
+            ->with('info', 'Please select a plan to renew the subscription.');
     }
 }

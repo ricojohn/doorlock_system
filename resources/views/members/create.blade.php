@@ -118,6 +118,27 @@
 
                         <div class="col-12">
                             <hr>
+                            <h5 class="card-title">Keyfob Information (Optional)</h5>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="keyfob_id" class="form-label">Assign Keyfob</label>
+                            <select class="form-select @error('keyfob_id') is-invalid @enderror" id="keyfob_id" name="keyfob_id">
+                                <option value="">Select Keyfob (Optional)</option>
+                                @foreach($availableKeyfobs as $keyfob)
+                                    <option value="{{ $keyfob->id }}" {{ old('keyfob_id') == $keyfob->id ? 'selected' : '' }}>
+                                        {{ $keyfob->card_number }} - {{ $keyfob->type == 'keyfob' ? 'Key Fob' : 'Card' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('keyfob_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="form-text text-muted">Select an available keyfob to assign to this member</small>
+                        </div>
+
+                        <div class="col-12">
+                            <hr>
                             <h5 class="card-title">Subscription Information (Optional)</h5>
                         </div>
 

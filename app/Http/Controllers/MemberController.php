@@ -6,6 +6,7 @@ use App\Http\Requests\StoreMemberRequest;
 use App\Http\Requests\UpdateMemberRequest;
 use App\Models\Member;
 use App\Models\Plan;
+use App\Models\RfidCard;
 use App\Models\Subscription;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -17,7 +18,7 @@ class MemberController extends Controller
      */
     public function index(): View
     {
-        $members = Member::with('activeSubscription')->orderBy('first_name')->get();
+        $members = Member::with(['activeSubscription', 'activeRfidCard'])->orderBy('first_name')->get();
 
         return view('members.index', compact('members'));
     }
@@ -28,8 +29,9 @@ class MemberController extends Controller
     public function create(): View
     {
         $plans = Plan::where('is_active', true)->orderBy('name')->get();
+        $availableKeyfobs = RfidCard::available()->where('type', 'keyfob')->orderBy('card_number')->get();
 
-        return view('members.create', compact('plans'));
+        return view('members.create', compact('plans', 'availableKeyfobs'));
     }
 
     /**
@@ -48,11 +50,15 @@ class MemberController extends Controller
 
         $member = Member::create($memberData);
 
+        $subscriptionEndDate = null;
+
         // Create subscription if plan_id is provided
         if ($request->filled('subscription_plan_id')) {
             $plan = Plan::find($request->subscription_plan_id);
             $startDate = now()->toDateString();
             $endDate = now()->addMonths($plan->duration_months)->toDateString();
+
+            $subscriptionEndDate = $endDate;
 
             Subscription::create([
                 'member_id' => $member->id,
@@ -65,6 +71,18 @@ class MemberController extends Controller
                 'payment_status' => $request->subscription_payment_status ?? 'pending',
                 'notes' => $request->subscription_notes,
             ]);
+        }
+
+        // Assign keyfob if provided
+        if ($request->filled('keyfob_id')) {
+            $keyfob = RfidCard::find($request->keyfob_id);
+            if ($keyfob && $keyfob->member_id === null) {
+                $keyfob->update([
+                    'member_id' => $member->id,
+                    'issued_at' => now()->toDateString(),
+                    'expires_at' => $subscriptionEndDate,
+                ]);
+            }
         }
 
         return redirect()->route('members.index')
@@ -109,5 +127,52 @@ class MemberController extends Controller
 
         return redirect()->route('members.index')
             ->with('success', 'Member deleted successfully.');
+    }
+
+    /**
+     * Show the form for assigning a keyfob to a member.
+     */
+    public function assignKeyfob(Member $member): View
+    {
+        $availableKeyfobs = RfidCard::available()->where('type', 'keyfob')->orderBy('card_number')->get();
+
+        return view('members.assign-keyfob', compact('member', 'availableKeyfobs'));
+    }
+
+    /**
+     * Store the assigned keyfob to the member.
+     */
+    public function storeKeyfob(Member $member): RedirectResponse
+    {
+        $keyfobId = request()->input('keyfob_id');
+
+        if (! $keyfobId) {
+            return redirect()->back()
+                ->with('error', 'Please select a keyfob.');
+        }
+
+        $keyfob = RfidCard::find($keyfobId);
+
+        if (! $keyfob) {
+            return redirect()->back()
+                ->with('error', 'Selected keyfob not found.');
+        }
+
+        if ($keyfob->member_id !== null) {
+            return redirect()->back()
+                ->with('error', 'This keyfob is already assigned to another member.');
+        }
+
+        $member->load('activeSubscription');
+        $expiresAt = $member->activeSubscription?->end_date;
+
+        $keyfob->update([
+            'member_id' => $member->id,
+            'issued_at' => now()->toDateString(),
+            'expires_at' => $expiresAt,
+        ]);
+
+        return redirect()->route('members.show', $member)
+            ->with('success', 'Keyfob assigned successfully.');
     }
 }

@@ -35,6 +35,7 @@ class StoreMemberRequest extends FormRequest
             'subscription_status' => ['nullable', 'in:active,expired,cancelled'],
             'subscription_payment_status' => ['nullable', 'in:paid,pending,overdue'],
             'subscription_notes' => ['nullable', 'string'],
+            'keyfob_id' => ['nullable', 'exists:rfid_cards,id'],
         ];
     }
 

@@ -3,11 +3,11 @@
 @section('content')
 
 <div class="pagetitle">
-    <h1>Subscription Management</h1>
+    <h1>RFID Card / Key Fob Management</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-            <li class="breadcrumb-item active">Subscriptions</li>
+            <li class="breadcrumb-item active">RFID Cards</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -19,75 +19,84 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex flex-column gap-2">
-                            <h5 class="card-title">Subscriptions List</h5>
+                            <h5 class="card-title">RFID Cards / Key Fobs List</h5>
                             <div class="d-flex gap-2 align-items-center">
-                                <a href="{{ route('subscriptions.create') }}" class="btn btn-sm btn-primary">
-                                    <i class="bi bi-plus-circle"></i> Add Subscription
+                                <a href="{{ route('rfid-cards.create') }}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-plus-circle"></i> Register Card/Key Fob
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover datatable" id="subscriptions-table">
+                        <table class="table table-hover datatable" id="rfid-cards-table">
                             <thead>
                                 <tr>
+                                    <th scope="col">Card Number</th>
+                                    <th scope="col">Type</th>
                                     <th scope="col">Member</th>
-                                    <th scope="col">Plan Name</th>
-                                    <th scope="col">Start Date</th>
-                                    <th scope="col">End Date</th>
-                                    <th scope="col">Price</th>
                                     <th scope="col">Status</th>
-                                    <th scope="col">Payment Status</th>
+                                    <th scope="col">Issued Date</th>
+                                    <th scope="col">Expires Date</th>
                                     <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($subscriptions as $subscription)
+                                @foreach ($rfidCards as $rfidCard)
                                     <tr>
-                                        <td>{{ $subscription->member->full_name }}</td>
+                                        <td><strong>{{ $rfidCard->card_number }}</strong></td>
                                         <td>
-                                            @if($subscription->plan)
-                                                <strong>{{ $subscription->plan->name }}</strong>
+                                            @if($rfidCard->type == 'card')
+                                                <span class="badge bg-info">Card</span>
                                             @else
-                                                {{ $subscription->plan_name ?? 'N/A' }}
+                                                <span class="badge bg-primary">Key Fob</span>
                                             @endif
                                         </td>
-                                        <td>{{ $subscription->start_date->format('M d, Y') }}</td>
-                                        <td>{{ $subscription->end_date->format('M d, Y') }}</td>
-                                        <td>₱{{ number_format($subscription->price, 2) }}</td>
                                         <td>
-                                            @if($subscription->status == 'active')
+                                            @if($rfidCard->member)
+                                                <a href="{{ route('members.show', $rfidCard->member) }}">
+                                                    {{ $rfidCard->member->full_name }}
+                                                </a>
+                                            @else
+                                                <span class="badge bg-secondary">Unassigned</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($rfidCard->status == 'active')
                                                 <span class="badge bg-success">Active</span>
-                                            @elseif($subscription->status == 'expired')
-                                                <span class="badge bg-danger">Expired</span>
+                                            @elseif($rfidCard->status == 'inactive')
+                                                <span class="badge bg-secondary">Inactive</span>
+                                            @elseif($rfidCard->status == 'lost')
+                                                <span class="badge bg-warning">Lost</span>
                                             @else
-                                                <span class="badge bg-secondary">Cancelled</span>
+                                                <span class="badge bg-danger">Stolen</span>
                                             @endif
                                         </td>
+                                        <td>{{ $rfidCard->issued_at->format('M d, Y') }}</td>
                                         <td>
-                                            @if($subscription->payment_status == 'paid')
-                                                <span class="badge bg-success">Paid</span>
-                                            @elseif($subscription->payment_status == 'pending')
-                                                <span class="badge bg-warning">Pending</span>
+                                            @if($rfidCard->expires_at)
+                                                {{ $rfidCard->expires_at->format('M d, Y') }}
+                                                @if($rfidCard->isExpired())
+                                                    <span class="badge bg-danger">Expired</span>
+                                                @endif
                                             @else
-                                                <span class="badge bg-danger">Overdue</span>
+                                                <span class="text-muted">No expiration</span>
                                             @endif
                                         </td>
                                         <td>
                                             <div class="btn-group gap-2" role="group">
-                                                <a href="{{ route('subscriptions.show', $subscription) }}" class="btn btn-sm btn-info" title="View">
+                                                <a href="{{ route('rfid-cards.show', $rfidCard) }}" class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <a href="{{ route('subscriptions.edit', $subscription) }}" class="btn btn-sm btn-warning" title="Edit">
+                                                <a href="{{ route('rfid-cards.edit', $rfidCard) }}" class="btn btn-sm btn-warning" title="Edit">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                {{-- <form action="{{ route('subscriptions.destroy', $subscription) }}" method="POST" class="d-inline delete-form">
+                                                <form action="{{ route('rfid-cards.destroy', $rfidCard) }}" method="POST" class="d-inline delete-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-danger" title="Delete">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
-                                                </form> --}}
+                                                </form>
                                             </div>
                                         </td>
                                     </tr>
@@ -95,6 +104,7 @@
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </div>
         </div>

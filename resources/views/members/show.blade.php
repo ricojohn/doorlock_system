@@ -97,9 +97,19 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="card-title">Subscriptions</h5>
-                        <a href="{{ route('subscriptions.create') }}?member_id={{ $member->id }}" class="btn btn-sm btn-primary">
-                            <i class="bi bi-plus-circle"></i> Add Subscription
-                        </a>
+                        <div class="d-flex gap-2">
+                            @if(! $member->activeSubscription && $member->subscriptions->count() > 0)
+                                <form action="{{ route('members.renew', $member) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="bi bi-arrow-clockwise"></i> Renew Subscription
+                                    </button>
+                                </form>
+                            @endif
+                            <a href="{{ route('subscriptions.create') }}?member_id={{ $member->id }}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-plus-circle"></i> Add Subscription
+                            </a>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover">

@@ -26,6 +26,10 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::resource('members', MemberController::class);
+    Route::post('members/{member}/renew', [\App\Http\Controllers\SubscriptionController::class, 'renew'])->name('members.renew');
+    Route::get('members/{member}/assign-keyfob', [\App\Http\Controllers\MemberController::class, 'assignKeyfob'])->name('members.assign-keyfob');
+    Route::post('members/{member}/store-keyfob', [\App\Http\Controllers\MemberController::class, 'storeKeyfob'])->name('members.store-keyfob');
     Route::resource('subscriptions', \App\Http\Controllers\SubscriptionController::class);
     Route::resource('plans', \App\Http\Controllers\PlanController::class);
+    Route::resource('rfid-cards', \App\Http\Controllers\RfidCardController::class);
 });

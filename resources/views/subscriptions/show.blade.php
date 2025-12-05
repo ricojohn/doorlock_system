@@ -21,6 +21,14 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="card-title">Subscription Information</h5>
                         <div>
+                            @if($subscription->status == 'expired' || ($subscription->status == 'active' && $subscription->end_date < now()))
+                                <form action="{{ route('members.renew', $subscription->member) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-arrow-clockwise"></i> Renew Subscription
+                                    </button>
+                                </form>
+                            @endif
                             <a href="{{ route('subscriptions.edit', $subscription) }}" class="btn btn-warning">
                                 <i class="bi bi-pencil"></i> Edit
                             </a>

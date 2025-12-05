@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | API Token
+    |--------------------------------------------------------------------------
+    |
+    | This token is used to authenticate API requests from external devices
+    | like ESP32. Set this in your ".env" file as API_TOKEN.
+    |
+    */
+
+    'api_token' => env('API_TOKEN', null),
+
 ];

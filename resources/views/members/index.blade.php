@@ -30,18 +30,17 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover datatable" id="members-table">
+                        <table class="table table-hover table-striped datatable" id="members-table">
                             <thead>
                                 <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Phone</th>
-                                    <th scope="col">Date of Birth</th>
-                                    <th scope="col">Gender</th>
-                                    <th scope="col">Subscription</th>
-                                    <th scope="col">Plan</th>
-                                    <th scope="col">Payment Status</th>
-                                    <th scope="col">Actions</th>
+                                    <th >Name</th>
+                                    <th >Email</th>
+                                    <th >Phone</th>
+                                    <th >Gender</th>
+                                    <th >Keyfob</th>
+                                    <th style="width: 100px;">Subscription</th>
+                                    <th >Payment Status</th>
+                                    <th style="width: 100px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -50,12 +49,18 @@
                                         <td>{{ $member->full_name }}</td>
                                         <td>{{ $member->email }}</td>
                                         <td>{{ $member->phone ?? 'N/A' }}</td>
-                                        <td>{{ $member->date_of_birth ? $member->date_of_birth->format('M d, Y') : 'N/A' }}</td>
                                         <td>
                                             @if($member->gender)
                                                 <span class="badge bg-info">{{ ucfirst($member->gender) }}</span>
                                             @else
                                                 N/A
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($member->activeRfidCard)
+                                                <span class="badge bg-success">{{ $member->activeRfidCard->card_number }}</span>
+                                            @else
+                                                <span class="badge bg-danger">No Keyfob</span>
                                             @endif
                                         </td>
                                         <td>
@@ -87,18 +92,26 @@
                                                 <a href="{{ route('members.edit', $member) }}" class="btn btn-sm btn-warning" title="Edit">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                @if(! $member->activeSubscription)
-                                                    <a href="{{ route('subscriptions.create', ['member_id' => $member->id]) }}" class="btn btn-sm btn-success" title="Renew Subscription">
-                                                        <i class="bi bi-arrow-clockwise"></i> Renew
+                                                @if(! $member->activeRfidCard)
+                                                    <a href="{{ route('members.assign-keyfob', $member) }}" class="btn btn-sm btn-primary" title="Register Keyfob">
+                                                        <i class="bi bi-credit-card"></i> Register Keyfob
                                                     </a>
                                                 @endif
-                                                <form action="{{ route('members.destroy', $member) }}" method="POST" class="d-inline delete-form">
+                                                @if(! $member->activeSubscription)
+                                                    <form action="{{ route('members.renew', $member) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-success" title="Renew Subscription">
+                                                            <i class="bi bi-arrow-clockwise"></i> Renew
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                {{-- <form action="{{ route('members.destroy', $member) }}" method="POST" class="d-inline delete-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-danger" title="Delete">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
-                                                </form>
+                                                </form> --}}
                                             </div>
                                         </td>
                                     </tr>

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Member extends Model
 {
@@ -68,5 +70,27 @@ class Member extends Model
     public function latestSubscription()
     {
         return $this->hasOne(Subscription::class)->latestOfMany();
+    }
+
+    /**
+     * Get the RFID cards for the member.
+     */
+    public function rfidCards(): HasMany
+    {
+        return $this->hasMany(RfidCard::class);
+    }
+
+    /**
+     * Get the active RFID card for the member.
+     */
+    public function activeRfidCard(): HasOne
+    {
+        return $this->hasOne(RfidCard::class)
+            ->where('status', 'active')
+            ->where(function ($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>=', now()->toDateString());
+            })
+            ->latest();
     }
 }
