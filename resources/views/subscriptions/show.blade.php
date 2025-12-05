@@ -69,7 +69,7 @@
 
                     <div class="row">
                         <div class="col-lg-3 col-md-4 label">Price</div>
-                        <div class="col-lg-9 col-md-8">${{ number_format($subscription->price, 2) }}</div>
+                        <div class="col-lg-9 col-md-8">₱{{ number_format($subscription->price, 2) }}</div>
                     </div>
 
                     <div class="row">

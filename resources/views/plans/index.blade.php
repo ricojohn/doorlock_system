@@ -44,7 +44,7 @@
                                 @foreach ($plans as $plan)
                                     <tr>
                                         <td><strong>{{ $plan->name }}</strong></td>
-                                        <td>${{ number_format($plan->price, 2) }}</td>
+                                        <td>₱{{ number_format($plan->price, 2) }}</td>
                                         <td>{{ $plan->duration_months }} {{ $plan->duration_months == 1 ? 'month' : 'months' }}</td>
                                         <td>{{ $plan->description ? Str::limit($plan->description, 50) : 'N/A' }}</td>
                                         <td>

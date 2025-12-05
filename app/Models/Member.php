@@ -56,6 +56,17 @@ class Member extends Model
      */
     public function activeSubscription()
     {
-        return $this->hasOne(Subscription::class)->where('status', 'active')->latest();
+        return $this->hasOne(Subscription::class)
+            ->where('status', 'active')
+            ->where('end_date', '>=', now()->toDateString())
+            ->latest();
+    }
+
+    /**
+     * Get the latest subscription for the member (regardless of status).
+     */
+    public function latestSubscription()
+    {
+        return $this->hasOne(Subscription::class)->latestOfMany();
     }
 }

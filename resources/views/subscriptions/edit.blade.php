@@ -48,7 +48,7 @@
                                         data-price="{{ $plan->price }}" 
                                         data-duration="{{ $plan->duration_months }}"
                                         {{ old('plan_id', $subscription->plan_id) == $plan->id ? 'selected' : '' }}>
-                                        {{ $plan->name }} - ${{ number_format($plan->price, 2) }} ({{ $plan->duration_months }} {{ $plan->duration_months == 1 ? 'month' : 'months' }})
+                                        {{ $plan->name }} - ₱{{ number_format($plan->price, 2) }} ({{ $plan->duration_months }} {{ $plan->duration_months == 1 ? 'month' : 'months' }})
                                     </option>
                                 @endforeach
                             </select>

@@ -13,6 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         //
     })
+    ->withSchedule(function ($schedule): void {
+        $schedule->command('subscriptions:expire')->daily();
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

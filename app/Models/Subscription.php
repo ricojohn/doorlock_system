@@ -57,4 +57,29 @@ class Subscription extends Model
     {
         return $this->belongsTo(Plan::class);
     }
+
+    /**
+     * Check if subscription is expired based on end date.
+     */
+    public function isExpired(): bool
+    {
+        return $this->end_date < now()->toDateString();
+    }
+
+    /**
+     * Scope a query to only include expired subscriptions.
+     */
+    public function scopeExpired($query)
+    {
+        return $query->where('end_date', '<', now()->toDateString());
+    }
+
+    /**
+     * Scope a query to only include active subscriptions.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active')
+            ->where('end_date', '>=', now()->toDateString());
+    }
 }

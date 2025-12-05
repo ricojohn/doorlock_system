@@ -38,6 +38,9 @@
                                     <th scope="col">Phone</th>
                                     <th scope="col">Date of Birth</th>
                                     <th scope="col">Gender</th>
+                                    <th scope="col">Subscription</th>
+                                    <th scope="col">Plan</th>
+                                    <th scope="col">Payment Status</th>
                                     <th scope="col">Actions</th>
                                 </tr>
                             </thead>
@@ -56,6 +59,27 @@
                                             @endif
                                         </td>
                                         <td>
+                                            @if($member->activeSubscription)
+                                                <span class="badge bg-success">{{ ucfirst($member->activeSubscription->status) }}</span>
+                                            @else
+                                                <span class="badge bg-danger">No Active Subscription</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($member->activeSubscription)
+                                                <span class="badge bg-success">{{ ucfirst($member->activeSubscription->plan_name) }}</span>
+                                            @else
+                                                <span class="badge bg-danger">No Active Subscription</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($member->activeSubscription)
+                                                <span class="badge bg-success">{{ ucfirst($member->activeSubscription->payment_status) }}</span>
+                                            @else
+                                                <span class="badge bg-danger">No Active Subscription</span>
+                                            @endif
+                                        </td>
+                                        <td>
                                             <div class="btn-group gap-2" role="group">
                                                 <a href="{{ route('members.show', $member) }}" class="btn btn-sm btn-info" title="View">
                                                     <i class="bi bi-eye"></i>
@@ -63,6 +87,11 @@
                                                 <a href="{{ route('members.edit', $member) }}" class="btn btn-sm btn-warning" title="Edit">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
+                                                @if(! $member->activeSubscription)
+                                                    <a href="{{ route('subscriptions.create', ['member_id' => $member->id]) }}" class="btn btn-sm btn-success" title="Renew Subscription">
+                                                        <i class="bi bi-arrow-clockwise"></i> Renew
+                                                    </a>
+                                                @endif
                                                 <form action="{{ route('members.destroy', $member) }}" method="POST" class="d-inline delete-form">
                                                     @csrf
                                                     @method('DELETE')

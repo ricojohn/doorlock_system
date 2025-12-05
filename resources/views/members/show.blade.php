@@ -120,7 +120,7 @@
                                         <td>{{ $subscription->plan_name }}</td>
                                         <td>{{ $subscription->start_date->format('M d, Y') }}</td>
                                         <td>{{ $subscription->end_date->format('M d, Y') }}</td>
-                                        <td>${{ number_format($subscription->price, 2) }}</td>
+                                        <td>₱{{ number_format($subscription->price, 2) }}</td>
                                         <td>
                                             @if($subscription->status == 'active')
                                                 <span class="badge bg-success">Active</span>
