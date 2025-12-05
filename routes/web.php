@@ -4,6 +4,11 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\RfidCardController;
+use App\Http\Controllers\AccessLogController;
+use App\Http\Controllers\WifiConfigurationController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -26,10 +31,16 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::resource('members', MemberController::class);
-    Route::post('members/{member}/renew', [\App\Http\Controllers\SubscriptionController::class, 'renew'])->name('members.renew');
-    Route::get('members/{member}/assign-keyfob', [\App\Http\Controllers\MemberController::class, 'assignKeyfob'])->name('members.assign-keyfob');
-    Route::post('members/{member}/store-keyfob', [\App\Http\Controllers\MemberController::class, 'storeKeyfob'])->name('members.store-keyfob');
-    Route::resource('subscriptions', \App\Http\Controllers\SubscriptionController::class);
-    Route::resource('plans', \App\Http\Controllers\PlanController::class);
-    Route::resource('rfid-cards', \App\Http\Controllers\RfidCardController::class);
+    Route::post('members/{member}/renew', [SubscriptionController::class, 'renew'])->name('members.renew');
+    Route::get('members/{member}/assign-keyfob', [MemberController::class, 'assignKeyfob'])->name('members.assign-keyfob');
+    Route::post('members/{member}/store-keyfob', [MemberController::class, 'storeKeyfob'])->name('members.store-keyfob');
+
+    Route::resource('subscriptions', SubscriptionController::class);
+
+    Route::resource('plans', PlanController::class);
+
+    Route::resource('rfid-cards', RfidCardController::class);
+    Route::get('access-logs/recent', [AccessLogController::class, 'recent'])->name('access-logs.recent');
+    Route::resource('access-logs', AccessLogController::class)->only(['index']);
+    Route::resource('wifi-configurations', WifiConfigurationController::class);
 });

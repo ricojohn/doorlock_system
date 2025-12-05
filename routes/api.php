@@ -10,4 +10,7 @@ Route::middleware('api.token')->group(function (): void {
 
     // RFID validation endpoint
     Route::post('/validate', [RfidValidationController::class, 'validate'])->name('api.validate');
+
+    // WiFi configuration endpoint
+    Route::get('/wifi-config', [RfidValidationController::class, 'getWifiConfig'])->name('api.wifi-config');
 });

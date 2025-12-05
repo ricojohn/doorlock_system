@@ -37,6 +37,20 @@
         </a>
       </li><!-- End RFID Cards Nav -->
 
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('access-logs.*') ? '' : 'collapsed' }}" href="{{ route('access-logs.index') }}">
+          <i class="bi bi-clock-history"></i>
+          <span>Access Logs</span>
+        </a>
+      </li><!-- End Access Logs Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('wifi-configurations.*') ? '' : 'collapsed' }}" href="{{ route('wifi-configurations.index') }}">
+          <i class="bi bi-wifi"></i>
+          <span>WiFi Configuration</span>
+        </a>
+      </li><!-- End WiFi Configuration Nav -->
+
       {{-- <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-menu-button-wide"></i><span>Components</span><i class="bi bi-chevron-down ms-auto"></i>

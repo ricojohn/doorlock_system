@@ -54,6 +54,9 @@
   @include('layout.sidebar')
   <!-- End Sidebar-->
 
+  <!-- Real-time Notification Container -->
+  <div id="rfid-notifications" class="position-fixed top-0 end-0 p-3" style="z-index: 9999; max-width: 400px;"></div>
+
   <main id="main" class="main">
     <div class="container-fluid">
         @yield('content')
@@ -156,6 +159,86 @@
   @endif
 
   @stack('scripts')
+
+  {{-- Pusher JS --}}
+  <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+
+  {{-- Real-time RFID Notification Script with Pusher --}}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const notificationContainer = document.getElementById('rfid-notifications');
+
+      // Initialize Pusher
+      const pusher = new Pusher('{{ config('broadcasting.connections.pusher.key') }}', {
+        cluster: '{{ config('broadcasting.connections.pusher.options.cluster') }}',
+        encrypted: true
+      });
+
+      // Subscribe to the RFID access channel
+      const channel = pusher.subscribe('rfid-access');
+
+      // Listen for access attempts
+      channel.bind('access.attempted', function(data) {
+        showNotification(data);
+      });
+
+      function showNotification(data) {
+        const isGranted = data.access_granted === 'granted';
+        const icon = isGranted ? 'bi-check-circle-fill' : 'bi-x-circle-fill';
+        const bgColor = isGranted ? 'bg-success' : 'bg-danger';
+
+        const notification = document.createElement('div');
+        notification.className = `alert ${bgColor} alert-dismissible fade show text-white shadow-lg mb-2`;
+        notification.style.minWidth = '300px';
+        notification.innerHTML = `
+          <div class="d-flex align-items-center">
+            <i class="bi ${icon} fs-4 me-2"></i>
+            <div class="flex-grow-1">
+              <strong>${data.member_name || 'Unknown'}</strong><br>
+              <small>Card: ${data.card_number}</small><br>
+              <small>${data.reason}</small><br>
+              <small class="opacity-75">${data.accessed_at}</small>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+          </div>
+        `;
+
+        notificationContainer.insertBefore(notification, notificationContainer.firstChild);
+
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+          }
+        }, 10000);
+
+        // Play sound (optional)
+        if (isGranted) {
+          // Success sound
+          playSound('success');
+        } else {
+          // Error sound
+          playSound('error');
+        }
+      }
+
+      function playSound(type) {
+        // You can add audio files for notifications
+        // const audio = new Audio(`/sounds/${type}.mp3`);
+        // audio.play().catch(e => console.log('Audio play failed:', e));
+      }
+
+      // Log connection status
+      pusher.connection.bind('connected', function() {
+        console.log('Pusher connected for RFID notifications');
+      });
+
+      pusher.connection.bind('error', function(err) {
+        console.error('Pusher connection error:', err);
+      });
+    });
+  </script>
 </body>
 
 </html>

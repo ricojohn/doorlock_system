@@ -32,6 +32,30 @@ Base URL: `https://your-domain.com/api` (or `http://your-ip/api` for local testi
 }
 ```
 
+#### Get WiFi Configuration
+
+-   **Endpoint**: `GET /api/wifi-config`
+-   **Authentication**: Required (X-API-Token header)
+-   **Response**:
+
+```json
+{
+    "success": true,
+    "ssid": "YourWiFiNetwork",
+    "password": "YourWiFiPassword",
+    "description": "Main office WiFi"
+}
+```
+
+**Error Response (404)**:
+
+```json
+{
+    "success": false,
+    "message": "No active WiFi configuration found"
+}
+```
+
 #### Validate RFID Card
 
 -   **Endpoint**: `POST /api/validate`
@@ -134,9 +158,11 @@ Base URL: `https://your-domain.com/api` (or `http://your-ip/api` for local testi
 }
 ```
 
-## ESP32 Code Example
+## ESP32 Code Examples
 
-Here's a basic example for ESP32 using Arduino:
+### Basic Example (Hardcoded WiFi)
+
+Here's a basic example for ESP32 using Arduino with hardcoded WiFi:
 
 ```cpp
 #include <WiFi.h>
@@ -206,6 +232,24 @@ void loop() {
   delay(1000);
 }
 ```
+
+### Advanced Example (Dynamic WiFi Configuration)
+
+For a complete example that retrieves WiFi credentials from the API, see `ESP32_WIFI_CONFIG_CODE.ino` in the project root. This example:
+
+-   Retrieves WiFi SSID and password from `/api/wifi-config` endpoint
+-   Automatically connects to the configured WiFi network
+-   Validates RFID cards via `/api/validate` endpoint
+-   Includes door lock control and status LEDs
+
+**Key Features:**
+
+-   Dynamic WiFi configuration (no need to hardcode WiFi credentials)
+-   Automatic WiFi reconnection
+-   Complete RFID validation flow
+-   Hardware control (door lock, LEDs)
+
+See `ESP32_WIFI_CONFIG_README.md` for detailed setup instructions.
 
 ## Authentication
 
