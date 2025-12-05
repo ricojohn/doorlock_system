@@ -17,7 +17,7 @@ class MemberController extends Controller
      */
     public function index(): View
     {
-        $members = Member::where('is_active', true)->orderBy('first_name')->orderBy('last_name')->get();
+        $members = Member::orderBy('first_name')->get();
 
         return view('members.index', compact('members'));
     }
