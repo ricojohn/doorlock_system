@@ -17,7 +17,7 @@ class MemberController extends Controller
      */
     public function index(): View
     {
-        $members = Member::latest()->paginate(10);
+        $members = Member::where('is_active', true)->orderBy('first_name')->orderBy('last_name')->get();
 
         return view('members.index', compact('members'));
     }
