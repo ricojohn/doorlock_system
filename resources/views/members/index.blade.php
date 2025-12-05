@@ -38,9 +38,10 @@
                                     <th >Phone</th>
                                     <th >Gender</th>
                                     <th >Keyfob</th>
-                                    <th style="width: 100px;">Subscription</th>
+                                    <th >Subscription</th>
+                                    <th >Plan</th>
                                     <th >Payment Status</th>
-                                    <th style="width: 100px;">Actions</th>
+                                    <th style="width: 15%;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
