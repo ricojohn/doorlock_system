@@ -94,7 +94,7 @@
                                                                 </td>
                                                                 <td>
                                                                     <small class="text-muted">
-                                                                        <strong>Start Date:</strong> {{ $member->activeSubscription->start_date->format('M d, Y') }} - 
+                                                                        <strong>Start Date:</strong> {{ $member->activeSubscription->start_date->format('M d, Y') }}
                                                                         <br>
                                                                         <strong>End Date:</strong> {{ $member->activeSubscription->end_date->format('M d, Y') }}
                                                                         <br>
