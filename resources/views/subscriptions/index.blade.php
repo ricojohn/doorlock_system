@@ -33,6 +33,7 @@
                                 <tr>
                                     <th scope="col">Member</th>
                                     <th scope="col">Plan Name</th>
+                                    <th scope="col">Type</th>
                                     <th scope="col">Start Date</th>
                                     <th scope="col">End Date</th>
                                     <th scope="col">Price</th>
@@ -50,6 +51,13 @@
                                                 <strong>{{ $subscription->plan->name }}</strong>
                                             @else
                                                 {{ $subscription->plan_name ?? 'N/A' }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($subscription->subscription_type == 'new')
+                                                <span class="badge bg-primary">New</span>
+                                            @else
+                                                <span class="badge bg-info">Renew</span>
                                             @endif
                                         </td>
                                         <td>{{ $subscription->start_date->format('M d, Y') }}</td>

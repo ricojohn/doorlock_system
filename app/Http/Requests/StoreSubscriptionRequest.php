@@ -30,6 +30,8 @@ class StoreSubscriptionRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:0'],
             'status' => ['nullable', 'in:active,expired,cancelled'],
             'payment_status' => ['nullable', 'in:paid,pending,overdue'],
+            'payment_method' => ['nullable', 'string', 'max:100'],
+            'subscription_type' => ['nullable', 'in:new,renew'],
             'notes' => ['nullable', 'string'],
         ];
     }

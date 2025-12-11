@@ -30,60 +30,87 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped datatable" id="members-table">
+                        <table class="table table-hover datatable" id="members-table">
                             <thead>
                                 <tr>
-                                    <th >Name</th>
-                                    <th >Email</th>
-                                    <th >Phone</th>
-                                    <th >Gender</th>
-                                    <th >Keyfob</th>
-                                    <th >Subscription</th>
-                                    <th >Plan</th>
-                                    <th >Payment Status</th>
+                                    <th style="width: 15%;">Member</th>
+                                    <th style="width: 15%;">Active Membership</th>
                                     <th style="width: 15%;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($members as $member)
+
                                     <tr>
-                                        <td>{{ $member->full_name }}</td>
-                                        <td>{{ $member->email }}</td>
-                                        <td>{{ $member->phone ?? 'N/A' }}</td>
                                         <td>
-                                            @if($member->gender)
-                                                <span class="badge bg-info">{{ ucfirst($member->gender) }}</span>
-                                            @else
-                                                N/A
-                                            @endif
+                                            <table class="table table-borderless">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Information</th>
+                                                        <th>Coach</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>{{ $member->full_name }}</strong>
+                                                            <br>
+                                                            <small class="text-muted">{{ $member->email ?? 'N/A' }}</small>
+                                                            <br>
+                                                            <small class="text-muted">{{ $member->phone ?? 'N/A' }}</small>
+                                                        </td>
+                                                        <td>
+                                                            <small class="text-muted">{{ $member->coach->full_name ?? 'N/A' }}</small>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </td>
                                         <td>
-                                            @if($member->activeRfidCard)
-                                                <span class="badge bg-success">{{ $member->activeRfidCard->card_number }}</span>
-                                            @else
-                                                <span class="badge bg-danger">No Keyfob</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($member->activeSubscription)
-                                                <span class="badge bg-success">{{ ucfirst($member->activeSubscription->status) }}</span>
-                                            @else
-                                                <span class="badge bg-danger">No Active Subscription</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($member->activeSubscription)
-                                                <span class="badge bg-success">{{ ucfirst($member->activeSubscription->plan_name) }}</span>
-                                            @else
-                                                <span class="badge bg-danger">No Active Subscription</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($member->activeSubscription)
-                                                <span class="badge bg-success">{{ ucfirst($member->activeSubscription->payment_status) }}</span>
-                                            @else
-                                                <span class="badge bg-danger">No Active Subscription</span>
-                                            @endif
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <table class="table table-borderless">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Subscription</th>
+                                                                <th>Status</th>
+                                                                <th>Duration</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if($member->activeSubscription)
+                                                            <tr>
+                                                                <td>
+                                                                    <small class="text-muted">{{ $member->activeSubscription->plan->name ?? 'N/A' }}</small>
+                                                                </td>
+                                                                <td>
+                                                                    @if($member->activeSubscription->status == 'active')
+                                                                        <span class="badge bg-success">Active</span>
+                                                                    @elseif($member->activeSubscription->status == 'expired')
+                                                                        <span class="badge bg-danger">Expired</span>
+                                                                    @else
+                                                                        <span class="badge bg-warning">Pending</span>
+                                                                    @endif
+                                                                </td>
+                                                                <td>
+                                                                    <small class="text-muted">
+                                                                        <strong>Start Date:</strong> {{ $member->activeSubscription->start_date->format('M d, Y') }} - 
+                                                                        <br>
+                                                                        <strong>End Date:</strong> {{ $member->activeSubscription->end_date->format('M d, Y') }}
+                                                                        <br>
+                                                                        <strong>Duration:</strong> {{ $member->activeSubscription->duration_months }} months
+                                                                    </small>
+                                                                </td>
+                                                            </tr>
+                                                            @else
+                                                            <tr>
+                                                                <td colspan="3" class="text-center text-muted">No active subscription</td>
+                                                            </tr>
+                                                            @endif
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             <div class="btn-group gap-2" role="group">

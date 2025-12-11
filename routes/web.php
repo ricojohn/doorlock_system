@@ -9,6 +9,7 @@ use App\Http\Controllers\PlanController;
 use App\Http\Controllers\RfidCardController;
 use App\Http\Controllers\AccessLogController;
 use App\Http\Controllers\WifiConfigurationController;
+use App\Http\Controllers\CoachController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -34,6 +35,8 @@ Route::middleware('auth')->group(function (): void {
     Route::post('members/{member}/renew', [SubscriptionController::class, 'renew'])->name('members.renew');
     Route::get('members/{member}/assign-keyfob', [MemberController::class, 'assignKeyfob'])->name('members.assign-keyfob');
     Route::post('members/{member}/store-keyfob', [MemberController::class, 'storeKeyfob'])->name('members.store-keyfob');
+
+    Route::resource('coaches', CoachController::class);
 
     Route::resource('subscriptions', SubscriptionController::class);
 

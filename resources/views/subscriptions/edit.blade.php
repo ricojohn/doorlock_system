@@ -114,6 +114,14 @@
                             @enderror
                         </div>
 
+                        <div class="col-md-6">
+                            <label for="payment_method" class="form-label">Payment Method</label>
+                            <input type="text" class="form-control @error('payment_method') is-invalid @enderror" id="payment_method" name="payment_method" value="{{ old('payment_method', $subscription->payment_method) }}" placeholder="e.g., Cash, Card, GCash">
+                            @error('payment_method')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="col-12">
                             <label for="notes" class="form-label">Notes</label>
                             <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" rows="3">{{ old('notes', $subscription->notes) }}</textarea>

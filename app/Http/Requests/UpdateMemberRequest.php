@@ -32,6 +32,17 @@ class UpdateMemberRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:20'],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'gender' => ['nullable', 'in:male,female,other'],
+            'status' => ['nullable', 'in:active,inactive,suspended'],
+            'coach_id' => ['nullable', 'exists:coaches,id'],
+            'pt_billing_type' => ['nullable', 'in:per_session,per_month'],
+            'pt_rate' => ['nullable', 'numeric', 'min:0', 'required_with:pt_billing_type'],
+            'house_number' => ['nullable', 'string', 'max:255'],
+            'street' => ['nullable', 'string', 'max:255'],
+            'barangay' => ['nullable', 'string', 'max:255'],
+            'city' => ['nullable', 'string', 'max:255'],
+            'state' => ['nullable', 'string', 'max:255'],
+            'postal_code' => ['nullable', 'string', 'max:255'],
+            'country' => ['nullable', 'string', 'max:255'],
         ];
     }
 

@@ -66,6 +66,17 @@
                     </div>
 
                     <div class="row">
+                        <div class="col-lg-3 col-md-4 label">Subscription Type</div>
+                        <div class="col-lg-9 col-md-8">
+                            @if($subscription->subscription_type == 'new')
+                                <span class="badge bg-primary">New</span>
+                            @else
+                                <span class="badge bg-info">Renew</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-lg-3 col-md-4 label">Start Date</div>
                         <div class="col-lg-9 col-md-8">{{ $subscription->start_date->format('F d, Y') }}</div>
                     </div>
@@ -104,6 +115,11 @@
                                 <span class="badge bg-danger">Overdue</span>
                             @endif
                         </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-3 col-md-4 label">Payment Method</div>
+                        <div class="col-lg-9 col-md-8">{{ $subscription->payment_method ?? 'N/A' }}</div>
                     </div>
 
                     @if($subscription->notes)

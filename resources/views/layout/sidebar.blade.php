@@ -17,6 +17,13 @@
       </li><!-- End Members Nav -->
 
       <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('coaches.*') ? '' : 'collapsed' }}" href="{{ route('coaches.index') }}">
+          <i class="bi bi-person-badge"></i>
+          <span>Coaches</span>
+        </a>
+      </li><!-- End Coaches Nav -->
+
+      <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('subscriptions.*') ? '' : 'collapsed' }}" href="{{ route('subscriptions.index') }}">
           <i class="bi bi-calendar-check"></i>
           <span>Subscriptions</span>

@@ -85,6 +85,24 @@
                     </div>
 
                     <div class="row">
+                        <div class="col-lg-3 col-md-4 label">Price</div>
+                        <div class="col-lg-9 col-md-8">
+                            @if($rfidCard->price !== null)
+                                ₱{{ number_format($rfidCard->price, 2) }}
+                            @else
+                                <span class="text-muted">Not set</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-3 col-md-4 label">Payment Method</div>
+                        <div class="col-lg-9 col-md-8">
+                            {{ $rfidCard->payment_method ?? 'N/A' }}
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-lg-3 col-md-4 label">Issued Date</div>
                         <div class="col-lg-9 col-md-8">{{ $rfidCard->issued_at->format('F d, Y') }}</div>
                     </div>

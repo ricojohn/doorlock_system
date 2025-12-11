@@ -24,6 +24,8 @@ class StorePlanRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'price' => ['required', 'numeric', 'min:0'],
+            'promo_name' => ['nullable', 'string', 'max:255'],
+            'discount_percent' => ['nullable', 'numeric', 'between:0,100'],
             'duration_months' => ['required', 'integer', 'min:1'],
             'description' => ['nullable', 'string'],
             'is_active' => ['nullable', 'boolean'],

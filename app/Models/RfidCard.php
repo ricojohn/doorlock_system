@@ -21,6 +21,8 @@ class RfidCard extends Model
         'card_number',
         'type',
         'status',
+        'price',
+        'payment_method',
         'issued_at',
         'expires_at',
         'notes',
@@ -34,6 +36,7 @@ class RfidCard extends Model
     protected function casts(): array
     {
         return [
+            'price' => 'decimal:2',
             'issued_at' => 'date',
             'expires_at' => 'date',
         ];

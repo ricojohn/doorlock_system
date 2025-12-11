@@ -25,6 +25,8 @@ class Subscription extends Model
         'price',
         'status',
         'payment_status',
+        'payment_method',
+        'subscription_type',
         'notes',
     ];
 

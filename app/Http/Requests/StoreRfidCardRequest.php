@@ -26,6 +26,8 @@ class StoreRfidCardRequest extends FormRequest
             'card_number' => ['required', 'string', 'max:255', 'unique:rfid_cards,card_number'],
             'type' => ['required', 'in:card,keyfob'],
             'status' => ['nullable', 'in:active,inactive,lost,stolen'],
+            'price' => ['nullable', 'numeric', 'min:0'],
+            'payment_method' => ['nullable', 'string', 'max:100'],
             'issued_at' => ['required', 'date'],
             'expires_at' => ['nullable', 'date', 'after:issued_at'],
             'notes' => ['nullable', 'string'],

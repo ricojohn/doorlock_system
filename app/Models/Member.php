@@ -23,6 +23,17 @@ class Member extends Model
         'phone',
         'date_of_birth',
         'gender',
+        'status',
+        'coach_id',
+        'pt_billing_type',
+        'pt_rate',
+        'house_number',
+        'street',
+        'barangay',
+        'city',
+        'state',
+        'postal_code',
+        'country',
     ];
 
     /**
@@ -34,6 +45,7 @@ class Member extends Model
     {
         return [
             'date_of_birth' => 'date',
+            'pt_rate' => 'decimal:2',
         ];
     }
 
@@ -92,5 +104,13 @@ class Member extends Model
                     ->orWhere('expires_at', '>=', now()->toDateString());
             })
             ->latest();
+    }
+
+    /**
+     * Get the coach assigned to the member.
+     */
+    public function coach()
+    {
+        return $this->belongsTo(Coach::class);
     }
 }

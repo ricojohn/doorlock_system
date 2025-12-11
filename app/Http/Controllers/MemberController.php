@@ -8,6 +8,8 @@ use App\Models\Member;
 use App\Models\Plan;
 use App\Models\RfidCard;
 use App\Models\Subscription;
+use App\Models\Coach;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -18,7 +20,7 @@ class MemberController extends Controller
      */
     public function index(): View
     {
-        $members = Member::with(['activeSubscription', 'activeRfidCard'])->orderBy('first_name')->get();
+        $members = Member::with(['activeSubscription', 'activeRfidCard', 'coach'])->orderBy('first_name')->get();
 
         return view('members.index', compact('members'));
     }
@@ -30,8 +32,9 @@ class MemberController extends Controller
     {
         $plans = Plan::where('is_active', true)->orderBy('name')->get();
         $availableKeyfobs = RfidCard::available()->where('type', 'keyfob')->orderBy('card_number')->get();
+        $coaches = Coach::where('status', 'active')->orderBy('first_name')->orderBy('last_name')->get();
 
-        return view('members.create', compact('plans', 'availableKeyfobs'));
+        return view('members.create', compact('plans', 'availableKeyfobs', 'coaches'));
     }
 
     /**
@@ -46,17 +49,33 @@ class MemberController extends Controller
             'phone',
             'date_of_birth',
             'gender',
+            'status',
+            'coach_id',
+            'pt_billing_type',
+            'pt_rate',
+            'house_number',
+            'street',
+            'barangay',
+            'city',
+            'state',
+            'postal_code',
+            'country',
         ]);
 
-        $member = Member::create($memberData);
+        $member = Member::create(array_merge(
+            ['status' => $memberData['status'] ?? 'active'],
+            $memberData
+        ));
 
         $subscriptionEndDate = null;
 
         // Create subscription if plan_id is provided
         if ($request->filled('subscription_plan_id')) {
             $plan = Plan::find($request->subscription_plan_id);
-            $startDate = now()->toDateString();
-            $endDate = now()->addMonths($plan->duration_months)->toDateString();
+            $startDate = Carbon::parse($request->subscription_start_date)->toDateString();
+            $endDate = Carbon::parse($request->subscription_start_date)
+                ->addMonths($plan->duration_months)
+                ->toDateString();
 
             $subscriptionEndDate = $endDate;
 
@@ -69,6 +88,8 @@ class MemberController extends Controller
                 'price' => $plan->price,
                 'status' => $request->subscription_status ?? 'active',
                 'payment_status' => $request->subscription_payment_status ?? 'pending',
+                'payment_method' => $request->subscription_payment_method,
+                'subscription_type' => 'new',
                 'notes' => $request->subscription_notes,
             ]);
         }
@@ -104,7 +125,9 @@ class MemberController extends Controller
      */
     public function edit(Member $member): View
     {
-        return view('members.edit', compact('member'));
+        $coaches = Coach::where('status', 'active')->orderBy('first_name')->orderBy('last_name')->get();
+
+        return view('members.edit', compact('member', 'coaches'));
     }
 
     /**

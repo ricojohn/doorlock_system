@@ -19,6 +19,8 @@ class Plan extends Model
     protected $fillable = [
         'name',
         'price',
+        'promo_name',
+        'discount_percent',
         'duration_months',
         'description',
         'is_active',
@@ -33,6 +35,7 @@ class Plan extends Model
     {
         return [
             'price' => 'decimal:2',
+            'discount_percent' => 'decimal:2',
             'duration_months' => 'integer',
             'is_active' => 'boolean',
         ];

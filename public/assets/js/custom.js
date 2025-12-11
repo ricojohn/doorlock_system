@@ -1,11 +1,14 @@
 $(document).ready(function() {
     // For DataTables
-    if($("#members-table").length != 0){
+    // Reusable function to initialize DataTable
+    function initDataTable(selector, emptyMessage) {
+        if ($(selector).length === 0) return;
+
         const config = {
             dom: '',
             language: {
-                emptyTable: 'No Member Available',
-                zeroRecords: 'No Member Available',
+                emptyTable: emptyMessage,
+                zeroRecords: emptyMessage,
                 searchPlaceholder: 'Search'
             },
             pageLength: 10,
@@ -24,66 +27,17 @@ $(document).ready(function() {
                 }
             ]
         };
-        
-        var table = new DataTable('#members-table', config);
+
+        const table = new DataTable(selector, config);
         table.buttons().container().appendTo('#exportButtons');
     }
 
-    if($("#subscriptions-table").length != 0){
-        const config = {
-            dom: '',
-            language: {
-                emptyTable: 'No Subscription Available',
-                zeroRecords: 'No Subscription Available',
-                searchPlaceholder: 'Search'
-            },
-            pageLength: 10,
-            responsive: true,
-            buttons: [
-                {
-                    extend: 'collection',
-                    text: '<i class="bi bi-file-earmark-excel"></i> Export',
-                    className: 'btn btn-success btn-sm',
-                    buttons: [
-                        { extend: 'copy', className: 'dropdown-item' },
-                        { extend: 'csv', className: 'dropdown-item' },
-                        { extend: 'excel', className: 'dropdown-item' },
-                        { extend: 'pdf', className: 'dropdown-item' },
-                    ]
-                }
-            ]
-        };
-        var table = new DataTable('#subscriptions-table', config);
-        table.buttons().container().appendTo('#exportButtons');
-    }
-
-    if($("#plans-table").length != 0){
-        const config = {
-            dom: '',
-            language: {
-                emptyTable: 'No Plan Available',
-                zeroRecords: 'No Plan Available',
-                searchPlaceholder: 'Search'
-            },
-            pageLength: 10,
-            responsive: true,
-            buttons: [
-                {
-                    extend: 'collection',
-                    text: '<i class="bi bi-file-earmark-excel"></i> Export',
-                    className: 'btn btn-success btn-sm',
-                    buttons: [
-                        { extend: 'copy', className: 'dropdown-item' },
-                        { extend: 'csv', className: 'dropdown-item' },
-                        { extend: 'excel', className: 'dropdown-item' },
-                        { extend: 'pdf', className: 'dropdown-item' },
-                    ]
-                }
-            ]
-        };
-        var table = new DataTable('#plans-table', config);
-        table.buttons().container().appendTo('#exportButtons');
-    }
+    // Initialize all tables
+    initDataTable('#members-table', 'No Member Available');
+    initDataTable('#subscriptions-table', 'No Subscription Available');
+    initDataTable('#plans-table', 'No Plan Available');
+    initDataTable('#coaches-table', 'No Coach Available');
+    initDataTable('#access-logs-table', 'No Access Log Available');
 
     // Phone number format PH
     const contactInput = document.getElementById('phone');

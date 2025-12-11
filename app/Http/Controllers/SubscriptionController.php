@@ -53,6 +53,11 @@ class SubscriptionController extends Controller
             }
         }
 
+        // Determine subscription type: 'renew' if member has existing subscriptions, 'new' otherwise
+        $member = Member::find($data['member_id']);
+        $hasExistingSubscriptions = $member && $member->subscriptions()->exists();
+        $data['subscription_type'] = $hasExistingSubscriptions ? 'renew' : 'new';
+
         Subscription::create($data);
 
         return redirect()->route('subscriptions.index')
