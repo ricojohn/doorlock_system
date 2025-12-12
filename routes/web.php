@@ -1,15 +1,16 @@
 <?php
 
+use App\Http\Controllers\AccessLogController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\CoachController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemberController;
-use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\RfidCardController;
-use App\Http\Controllers\AccessLogController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\WifiConfigurationController;
-use App\Http\Controllers\CoachController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -25,9 +26,7 @@ Route::middleware('guest')->group(function (): void {
 });
 
 Route::middleware('auth')->group(function (): void {
-    Route::get('/', function () {
-        return view('pages.index');
-    })->name('home');
+    Route::get('/', [DashboardController::class, 'index'])->name('home');
 
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 

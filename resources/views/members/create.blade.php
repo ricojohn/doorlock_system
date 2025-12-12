@@ -87,47 +87,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-
-                        <div class="col-12">
-                            <hr>
-                            <h5 class="card-title">Personal Trainer (Optional)</h5>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="coach_id" class="form-label">Assign Coach</label>
-                            <select class="form-select @error('coach_id') is-invalid @enderror" id="coach_id" name="coach_id">
-                                <option value="">Select Coach</option>
-                                @foreach($coaches as $coach)
-                                    <option value="{{ $coach->id }}" {{ old('coach_id') == $coach->id ? 'selected' : '' }}>
-                                        {{ $coach->first_name }} {{ $coach->last_name }} {{ $coach->specialty ? ' - ' . $coach->specialty : '' }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('coach_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="pt_billing_type" class="form-label">PT Billing Type</label>
-                            <select class="form-select @error('pt_billing_type') is-invalid @enderror" id="pt_billing_type" name="pt_billing_type">
-                                <option value="">Select Billing</option>
-                                <option value="per_session" {{ old('pt_billing_type') == 'per_session' ? 'selected' : '' }}>Per Session</option>
-                                <option value="per_month" {{ old('pt_billing_type') == 'per_month' ? 'selected' : '' }}>Per Month</option>
-                            </select>
-                            @error('pt_billing_type')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="pt_rate" class="form-label">PT Rate</label>
-                            <input type="number" step="0.01" min="0" class="form-control @error('pt_rate') is-invalid @enderror" id="pt_rate" name="pt_rate" value="{{ old('pt_rate') }}" placeholder="e.g., 500 per session">
-                            @error('pt_rate')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
+                        
 
                         <div class="col-md-4">
                             <label for="house_number" class="form-label">House Number</label>
@@ -184,6 +144,49 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <div class="col-12">
+                            <hr>
+                            <h5 class="card-title">Personal Trainer (Optional)</h5>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="coach_id" class="form-label">Assign Coach</label>
+                            <select class="form-select @error('coach_id') is-invalid @enderror" id="coach_id" name="coach_id">
+                                <option value="">Select Coach</option>
+                                @foreach($coaches as $coach)
+                                    <option value="{{ $coach->id }}" {{ old('coach_id') == $coach->id ? 'selected' : '' }}>
+                                        {{ $coach->first_name }} {{ $coach->last_name }} {{ $coach->specialty ? ' - ' . $coach->specialty : '' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('coach_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="pt_billing_type" class="form-label">PT Billing Type</label>
+                            <select class="form-select @error('pt_billing_type') is-invalid @enderror" id="pt_billing_type" name="pt_billing_type">
+                                <option value="">Select Billing</option>
+                                <option value="per_session" {{ old('pt_billing_type') == 'per_session' ? 'selected' : '' }}>Per Session</option>
+                                <option value="per_month" {{ old('pt_billing_type') == 'per_month' ? 'selected' : '' }}>Per Month</option>
+                            </select>
+                            @error('pt_billing_type')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="pt_rate" class="form-label">PT Rate</label>
+                            <input type="number" step="0.01" min="0" class="form-control @error('pt_rate') is-invalid @enderror" id="pt_rate" name="pt_rate" value="{{ old('pt_rate') }}" placeholder="e.g., 500 per session">
+                            @error('pt_rate')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+
+                        
 
                         <div class="col-12">
                             <hr>
