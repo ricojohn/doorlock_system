@@ -26,7 +26,7 @@ class RfidValidationController extends Controller
 
         // Find the RFID card
         $rfidCard = RfidCard::where('card_number', $cardNumber)
-            ->with(['member.activeSubscription'])
+            ->with(['member'])
             ->first();
 
         $accessGranted = false;
@@ -84,22 +84,7 @@ class RfidValidationController extends Controller
                 'success' => false,
                 'message' => $reason,
                 'access_granted' => false,
-                'expires_at' => $rfidCard->expires_at?->format('Y-m-d'),
-            ], 403);
-        }
-
-        // Check if member has active subscription
-        $activeSubscription = $member->activeSubscription;
-
-        if (! $activeSubscription) {
-            $reason = 'Member has no active subscription';
-            $this->logAccess($cardNumber, $rfidCard->id, $memberId, 'denied', $reason, $ipAddress, $memberName);
-
-            return response()->json([
-                'success' => false,
-                'message' => $reason,
-                'access_granted' => false,
-                'member_name' => $memberName,
+                'expires_at' => optional($rfidCard->expires_at)->format('Y-m-d'),
             ], 403);
         }
 
@@ -120,13 +105,8 @@ class RfidValidationController extends Controller
             'card' => [
                 'number' => $rfidCard->card_number,
                 'type' => $rfidCard->type,
-                'issued_at' => $rfidCard->issued_at->format('Y-m-d'),
-                'expires_at' => $rfidCard->expires_at?->format('Y-m-d'),
-            ],
-            'subscription' => [
-                'plan_name' => $activeSubscription->plan_name,
-                'end_date' => $activeSubscription->end_date->format('Y-m-d'),
-                'status' => $activeSubscription->status,
+                'issued_at' => optional($rfidCard->issued_at)->format('Y-m-d'),
+                'expires_at' => optional($rfidCard->expires_at)->format('Y-m-d'),
             ],
         ], 200);
     }

@@ -17,13 +17,6 @@
       </li><!-- End Members Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('coaches.*') ? '' : 'collapsed' }}" href="{{ route('coaches.index') }}">
-          <i class="bi bi-person-badge"></i>
-          <span>Coaches</span>
-        </a>
-      </li><!-- End Coaches Nav -->
-
-      <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('subscriptions.*') ? '' : 'collapsed' }}" href="{{ route('subscriptions.index') }}">
           <i class="bi bi-calendar-check"></i>
           <span>Subscriptions</span>
@@ -31,11 +24,18 @@
       </li><!-- End Subscriptions Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('plans.*') ? '' : 'collapsed' }}" href="{{ route('plans.index') }}">
-          <i class="bi bi-card-list"></i>
-          <span>Plans</span>
+        <a class="nav-link {{ request()->routeIs('coaches.*') ? '' : 'collapsed' }}" href="{{ route('coaches.index') }}">
+          <i class="bi bi-person-badge"></i>
+          <span>Coaches</span>
         </a>
-      </li><!-- End Plans Nav -->
+      </li><!-- End Coaches Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('pt-session-plans.*') ? '' : 'collapsed' }}" href="{{ route('pt-session-plans.index') }}">
+          <i class="bi bi-activity"></i>
+          <span>PT Session Plans</span>
+        </a>
+      </li><!-- End PT Session Plans Nav -->
 
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('rfid-cards.*') ? '' : 'collapsed' }}" href="{{ route('rfid-cards.index') }}">

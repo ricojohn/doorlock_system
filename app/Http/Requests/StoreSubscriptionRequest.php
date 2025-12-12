@@ -21,18 +21,26 @@ class StoreSubscriptionRequest extends FormRequest
      */
     public function rules(): array
     {
+        // If subscription_id is present, it's for adding to member
+        if ($this->has('subscription_id')) {
+            return [
+                'subscription_id' => ['required', 'exists:subscriptions,id'],
+                'subscription_type' => ['required', 'in:New,Renewal'],
+                'start_date' => ['required', 'date'],
+                'price' => ['nullable', 'numeric', 'min:0'],
+                'payment_type' => ['nullable', 'string', 'max:255'],
+                'payment_status' => ['nullable', 'in:paid,pending,overdue'],
+                'notes' => ['nullable', 'string'],
+            ];
+        }
+
+        // Otherwise, it's creating a subscription template
         return [
-            'member_id' => ['required', 'exists:members,id'],
-            'plan_id' => ['nullable', 'exists:plans,id'],
-            'plan_name' => ['nullable', 'string', 'max:255', 'required_without:plan_id'],
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date', 'after:start_date'],
+            'name' => ['required', 'string', 'max:255'],
             'price' => ['required', 'numeric', 'min:0'],
-            'status' => ['nullable', 'in:active,expired,cancelled'],
-            'payment_status' => ['nullable', 'in:paid,pending,overdue'],
-            'payment_method' => ['nullable', 'string', 'max:100'],
-            'subscription_type' => ['nullable', 'in:new,renew'],
-            'notes' => ['nullable', 'string'],
+            'duration_months' => ['required', 'integer', 'min:1'],
+            'status' => ['nullable', 'in:active,inactive'],
+            'description' => ['nullable', 'string'],
         ];
     }
 
@@ -44,19 +52,16 @@ class StoreSubscriptionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'member_id.required' => 'Please select a member.',
-            'member_id.exists' => 'The selected member does not exist.',
-            'plan_name.required' => 'Plan name is required.',
-            'start_date.required' => 'Start date is required.',
-            'start_date.date' => 'Please enter a valid start date.',
-            'end_date.required' => 'End date is required.',
-            'end_date.date' => 'Please enter a valid end date.',
-            'end_date.after' => 'End date must be after start date.',
+            'name.required' => 'Subscription name is required.',
             'price.required' => 'Price is required.',
             'price.numeric' => 'Price must be a valid number.',
-            'price.min' => 'Price must be at least 0.',
-            'status.in' => 'Please select a valid status.',
-            'payment_status.in' => 'Please select a valid payment status.',
+            'duration_months.required' => 'Duration in months is required.',
+            'duration_months.integer' => 'Duration must be a whole number.',
+            'duration_months.min' => 'Duration must be at least 1 month.',
+            'subscription_id.required' => 'Please select a subscription.',
+            'subscription_type.required' => 'Subscription type is required.',
+            'start_date.required' => 'Start date is required.',
+            'start_date.date' => 'Please enter a valid start date.',
         ];
     }
 }

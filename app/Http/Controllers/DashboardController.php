@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DashboardFilterRequest;
 use App\Models\AccessLog;
-use App\Models\Coach;
 use App\Models\Member;
-use App\Models\Subscription;
+use App\Models\MemberSubscription;
+use App\Models\PtSessionPlan;
+use App\Models\RfidCard;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -29,9 +30,24 @@ class DashboardController extends Controller
 
         $membersCount = Member::whereBetween('created_at', [$startDateString, $endDateString])->count();
 
-        $revenue = Subscription::where('payment_status', 'paid')
+        // Calculate revenue from paid subscriptions created in date range
+        $subscriptionRevenue = MemberSubscription::where('payment_status', 'paid')
             ->whereBetween('created_at', [$startDateString, $endDateString])
             ->sum('price');
+
+        // Calculate revenue from PT session plans created in date range
+        $ptSessionRevenue = PtSessionPlan::whereNotNull('price')
+            ->whereBetween('created_at', [$startDateString, $endDateString])
+            ->sum('price');
+
+        // Calculate revenue from RFID cards/keyfobs issued in date range
+        $rfidCardRevenue = RfidCard::whereNotNull('price')
+            ->whereNotNull('issued_at')
+            ->whereBetween('issued_at', [$startDate->toDateString(), $endDate->toDateString()])
+            ->sum('price');
+
+        // Total revenue
+        $revenue = $subscriptionRevenue + $ptSessionRevenue + $rfidCardRevenue;
 
         $accessLogsInRange = AccessLog::whereBetween('accessed_at', [$startDateString, $endDateString]);
 
@@ -58,27 +74,15 @@ class DashboardController extends Controller
             ->orderByDesc('checkins_count')
             ->first();
 
-        $topCoach = Coach::select(
-            'coaches.id',
-            'coaches.first_name',
-            'coaches.last_name',
-            DB::raw('COUNT(members.id) as member_count')
-        )
-            ->join('members', 'members.coach_id', '=', 'coaches.id')
-            ->whereBetween('members.created_at', [$startDate, $endDate])
-            ->groupBy('coaches.id', 'coaches.first_name', 'coaches.last_name')
-            ->orderByDesc('member_count')
-            ->first();
-
         $peakHours = (clone $grantedCheckins)
             ->selectRaw('HOUR(accessed_at) as hour, COUNT(*) as total')
-            ->groupBy('hour')
+            ->groupBy(DB::raw('HOUR(accessed_at)'))
             ->orderBy('hour')
             ->get();
 
         $checkinsPerDay = (clone $grantedCheckins)
             ->selectRaw('DATE(accessed_at) as date, COUNT(*) as total')
-            ->groupBy('date')
+            ->groupBy(DB::raw('DATE(accessed_at)'))
             ->orderBy('date')
             ->get();
 
@@ -87,7 +91,6 @@ class DashboardController extends Controller
             ->groupByRaw("DATE_FORMAT(accessed_at, '%x-%v')")
             ->orderByRaw("DATE_FORMAT(accessed_at, '%x-%v')")
             ->get();
-
 
         return view('dashboard.index', [
             'filters' => [
@@ -98,7 +101,7 @@ class DashboardController extends Controller
             'revenue' => $revenue,
             'recentAccessLogs' => $recentAccessLogs,
             'mostActiveMember' => $mostActiveMember,
-            'topCoach' => $topCoach,
+            'topCoach' => null,
             'peakHours' => $peakHours,
             'checkinsPerDay' => $checkinsPerDay,
             'checkinsPerWeek' => $checkinsPerWeek,

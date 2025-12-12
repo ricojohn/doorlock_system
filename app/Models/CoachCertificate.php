@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Subscription extends Model
+class CoachCertificate extends Model
 {
     use HasFactory;
 
@@ -15,11 +16,12 @@ class Subscription extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'price',
-        'duration_months',
-        'status',
-        'description',
+        'coach_id',
+        'certificate_name',
+        'issuing_organization',
+        'issue_date',
+        'expiry_date',
+        'certificate_number',
     ];
 
     /**
@@ -30,15 +32,16 @@ class Subscription extends Model
     protected function casts(): array
     {
         return [
-            'price' => 'decimal:2',
+            'issue_date' => 'date',
+            'expiry_date' => 'date',
         ];
     }
 
     /**
-     * Get the member subscriptions for this subscription template.
+     * Get the coach that owns the certificate.
      */
-    public function memberSubscriptions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function coach(): BelongsTo
     {
-        return $this->hasMany(MemberSubscription::class);
+        return $this->belongsTo(Coach::class);
     }
 }

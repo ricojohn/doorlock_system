@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="pagetitle">
-    <h1>RFID Card / Key Fob Details</h1>
+    <h1>Key Fob Details</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
@@ -19,7 +19,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="card-title">Card / Key Fob Information</h5>
+                        <h5 class="card-title">Key Fob Information</h5>
                         <div>
                             <a href="{{ route('rfid-cards.edit', $rfidCard) }}" class="btn btn-warning">
                                 <i class="bi bi-pencil"></i> Edit
@@ -36,19 +36,8 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-lg-3 col-md-4 label">Card Number</div>
+                        <div class="col-lg-3 col-md-4 label">Key Fob Number</div>
                         <div class="col-lg-9 col-md-8"><strong>{{ $rfidCard->card_number }}</strong></div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-lg-3 col-md-4 label">Type</div>
-                        <div class="col-lg-9 col-md-8">
-                            @if($rfidCard->type == 'card')
-                                <span class="badge bg-info">RFID Card</span>
-                            @else
-                                <span class="badge bg-primary">Key Fob</span>
-                            @endif
-                        </div>
                     </div>
 
                     <div class="row">
@@ -92,13 +81,6 @@
                             @else
                                 <span class="text-muted">Not set</span>
                             @endif
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-lg-3 col-md-4 label">Payment Method</div>
-                        <div class="col-lg-9 col-md-8">
-                            {{ $rfidCard->payment_method ?? 'N/A' }}
                         </div>
                     </div>
 

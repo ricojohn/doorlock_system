@@ -7,7 +7,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CoachController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemberController;
-use App\Http\Controllers\PlanController;
+use App\Http\Controllers\PtSessionPlanController;
 use App\Http\Controllers\RfidCardController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\WifiConfigurationController;
@@ -31,18 +31,19 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::resource('members', MemberController::class);
-    Route::post('members/{member}/renew', [SubscriptionController::class, 'renew'])->name('members.renew');
     Route::get('members/{member}/assign-keyfob', [MemberController::class, 'assignKeyfob'])->name('members.assign-keyfob');
     Route::post('members/{member}/store-keyfob', [MemberController::class, 'storeKeyfob'])->name('members.store-keyfob');
-
-    Route::resource('coaches', CoachController::class);
-
-    Route::resource('subscriptions', SubscriptionController::class);
-
-    Route::resource('plans', PlanController::class);
 
     Route::resource('rfid-cards', RfidCardController::class);
     Route::get('access-logs/recent', [AccessLogController::class, 'recent'])->name('access-logs.recent');
     Route::resource('access-logs', AccessLogController::class)->only(['index']);
     Route::resource('wifi-configurations', WifiConfigurationController::class);
+
+    Route::resource('subscriptions', SubscriptionController::class);
+    Route::get('members/{member}/add-subscription', [SubscriptionController::class, 'createForMember'])->name('subscriptions.create-for-member');
+    Route::post('members/{member}/store-subscription', [SubscriptionController::class, 'storeForMember'])->name('subscriptions.store-for-member');
+
+    Route::resource('coaches', CoachController::class);
+
+    Route::resource('pt-session-plans', PtSessionPlanController::class);
 });

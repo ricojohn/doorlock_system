@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="pagetitle">
-    <h1>Add New Member</h1>
+    <h1>Add Member</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
@@ -11,300 +11,167 @@
             <li class="breadcrumb-item active">Create</li>
         </ol>
     </nav>
-</div><!-- End Page Title -->
+</div>
 
 <section class="section">
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Member Information</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title mb-0">Member Information</h5>
+                        <a href="{{ route('members.index') }}" class="btn btn-secondary btn-sm">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </a>
+                    </div>
 
                     <form action="{{ route('members.store') }}" method="POST" class="row g-3">
                         @csrf
 
-                        <div class="col-md-6">
-                            <label for="first_name" class="form-label">First Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="first_name" name="first_name" value="{{ old('first_name') }}" required placeholder="Enter first name">
+                        <!-- Member Information Section -->
+                        <div class="col-12">
+                            <h6 class="text-primary border-bottom pb-2 mb-3">
+                                <i class="bi bi-person"></i> Member Information
+                            </h6>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">First Name <span class="text-danger">*</span></label>
+                            <input type="text" name="first_name" class="form-control @error('first_name') is-invalid @enderror" value="{{ old('first_name') }}" required>
                             @error('first_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="last_name" class="form-label">Last Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('last_name') is-invalid @enderror" id="last_name" name="last_name" value="{{ old('last_name') }}" required placeholder="Enter last name">
+                        <div class="col-md-4">
+                            <label class="form-label">Last Name <span class="text-danger">*</span></label>
+                            <input type="text" name="last_name" class="form-control @error('last_name') is-invalid @enderror" value="{{ old('last_name') }}" required>
                             @error('last_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required placeholder="Enter email">
+                        <div class="col-md-4">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="phone" class="form-label">Phone</label>
-                            <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" placeholder="+639XXXXXXXXX">
+                        <div class="col-md-4">
+                            <label class="form-label">Phone</label>
+                            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}">
                             @error('phone')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="date_of_birth" class="form-label">Date of Birth</label>
-                            <input type="date" class="form-control @error('date_of_birth') is-invalid @enderror" id="date_of_birth" name="date_of_birth" value="{{ old('date_of_birth') }}" placeholder="Select date of birth">
+                        <div class="col-md-4">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" name="date_of_birth" class="form-control @error('date_of_birth') is-invalid @enderror" value="{{ old('date_of_birth') }}">
                             @error('date_of_birth')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="gender" class="form-label">Gender</label>
-                            <select class="form-select @error('gender') is-invalid @enderror" id="gender" name="gender">
+                        <div class="col-md-4">
+                            <label class="form-label">Gender</label>
+                            <select name="gender" class="form-select @error('gender') is-invalid @enderror">
                                 <option value="">Select Gender</option>
-                                <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male</option>
-                                <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female</option>
-                                <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>Other</option>
+                                <option value="male" @selected(old('gender') === 'male')>Male</option>
+                                <option value="female" @selected(old('gender') === 'female')>Female</option>
+                                <option value="other" @selected(old('gender') === 'other')>Other</option>
                             </select>
                             @error('gender')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="status" class="form-label">Member Status</label>
-                            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
-                                <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
-                                <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                <option value="suspended" {{ old('status') == 'suspended' ? 'selected' : '' }}>Suspended</option>
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select @error('status') is-invalid @enderror">
+                                <option value="active" @selected(old('status', 'active') === 'active')>Active</option>
+                                <option value="inactive" @selected(old('status') === 'inactive')>Inactive</option>
+                                <option value="suspended" @selected(old('status') === 'suspended')>Suspended</option>
                             </select>
                             @error('status')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
+                        <!-- Additional Information Section -->
+                        <div class="col-12 mt-4">
+                            <h6 class="text-primary border-bottom pb-2 mb-3">
+                                <i class="bi bi-geo-alt"></i> Additional Information
+                            </h6>
+                        </div>
 
                         <div class="col-md-4">
-                            <label for="house_number" class="form-label">House Number</label>
-                            <input type="text" class="form-control @error('house_number') is-invalid @enderror" id="house_number" name="house_number" value="{{ old('house_number') }}" placeholder="Enter house number">
+                            <label class="form-label">House Number</label>
+                            <input type="text" name="house_number" class="form-control @error('house_number') is-invalid @enderror" value="{{ old('house_number') }}">
                             @error('house_number')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="col-md-4">
-                            <label for="street" class="form-label">Street</label>
-                            <input type="text" class="form-control @error('street') is-invalid @enderror" id="street" name="street" value="{{ old('street') }}" placeholder="Enter street">
+                            <label class="form-label">Street</label>
+                            <input type="text" name="street" class="form-control @error('street') is-invalid @enderror" value="{{ old('street') }}">
                             @error('street')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="col-md-4">
-                            <label for="barangay" class="form-label">Barangay</label>
-                            <input type="text" class="form-control @error('barangay') is-invalid @enderror" id="barangay" name="barangay" value="{{ old('barangay') }}" placeholder="Enter barangay">
+                            <label class="form-label">Barangay</label>
+                            <input type="text" name="barangay" class="form-control @error('barangay') is-invalid @enderror" value="{{ old('barangay') }}">
                             @error('barangay')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="col-md-4">
-                            <label for="city" class="form-label">City</label>
-                            <input type="text" class="form-control @error('city') is-invalid @enderror" id="city" name="city" value="{{ old('city') }}" placeholder="Enter city">
+                            <label class="form-label">City</label>
+                            <input type="text" name="city" class="form-control @error('city') is-invalid @enderror" value="{{ old('city') }}">
                             @error('city')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="col-md-4">
-                            <label for="state" class="form-label">State</label>
-                            <input type="text" class="form-control @error('state') is-invalid @enderror" id="state" name="state" value="{{ old('state') }}" placeholder="Enter state">
+                            <label class="form-label">State</label>
+                            <input type="text" name="state" class="form-control @error('state') is-invalid @enderror" value="{{ old('state') }}">
                             @error('state')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="col-md-4">
-                            <label for="postal_code" class="form-label">Postal Code</label>
-                            <input type="text" class="form-control @error('postal_code') is-invalid @enderror" id="postal_code" name="postal_code" value="{{ old('postal_code') }}" placeholder="Enter postal code">
+                            <label class="form-label">Postal Code</label>
+                            <input type="text" name="postal_code" class="form-control @error('postal_code') is-invalid @enderror" value="{{ old('postal_code') }}">
                             @error('postal_code')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-12">
-                            <label for="country" class="form-label">Country</label>
-                            <input type="text" class="form-control @error('country') is-invalid @enderror" id="country" name="country" value="{{ old('country') }}" placeholder="Enter country">
+                        <div class="col-md-4">
+                            <label class="form-label">Country</label>
+                            <input type="text" name="country" class="form-control @error('country') is-invalid @enderror" value="{{ old('country') }}">
                             @error('country')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-12">
-                            <hr>
-                            <h5 class="card-title">Personal Trainer (Optional)</h5>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="coach_id" class="form-label">Assign Coach</label>
-                            <select class="form-select @error('coach_id') is-invalid @enderror" id="coach_id" name="coach_id">
-                                <option value="">Select Coach</option>
-                                @foreach($coaches as $coach)
-                                    <option value="{{ $coach->id }}" {{ old('coach_id') == $coach->id ? 'selected' : '' }}>
-                                        {{ $coach->first_name }} {{ $coach->last_name }} {{ $coach->specialty ? ' - ' . $coach->specialty : '' }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('coach_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="pt_billing_type" class="form-label">PT Billing Type</label>
-                            <select class="form-select @error('pt_billing_type') is-invalid @enderror" id="pt_billing_type" name="pt_billing_type">
-                                <option value="">Select Billing</option>
-                                <option value="per_session" {{ old('pt_billing_type') == 'per_session' ? 'selected' : '' }}>Per Session</option>
-                                <option value="per_month" {{ old('pt_billing_type') == 'per_month' ? 'selected' : '' }}>Per Month</option>
-                            </select>
-                            @error('pt_billing_type')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="pt_rate" class="form-label">PT Rate</label>
-                            <input type="number" step="0.01" min="0" class="form-control @error('pt_rate') is-invalid @enderror" id="pt_rate" name="pt_rate" value="{{ old('pt_rate') }}" placeholder="e.g., 500 per session">
-                            @error('pt_rate')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-
-                        
-
-                        <div class="col-12">
-                            <hr>
-                            <h5 class="card-title">Subscription Information (Optional)</h5>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="subscription_plan_id" class="form-label">Plan</label>
-                            <select class="form-select @error('subscription_plan_id') is-invalid @enderror" id="subscription_plan_id" name="subscription_plan_id">
-                                <option value="">Select Plan (Optional)</option>
-                                @foreach($plans as $plan)
-                                    <option value="{{ $plan->id }}" 
-                                        data-price="{{ $plan->price }}" 
-                                        data-duration="{{ $plan->duration_months }}"
-                                        {{ old('subscription_plan_id') == $plan->id ? 'selected' : '' }}>
-                                        {{ $plan->name }} - ₱{{ number_format($plan->price, 2) }} ({{ $plan->duration_months }} {{ $plan->duration_months == 1 ? 'month' : 'months' }})
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('subscription_plan_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-3">
-                            <label for="subscription_start_date" class="form-label">Start Date</label>
-                            <input type="date" class="form-control @error('subscription_start_date') is-invalid @enderror" id="subscription_start_date" name="subscription_start_date" value="{{ old('subscription_start_date') }}">
-                            @error('subscription_start_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="form-text text-muted">Choose when the subscription begins</small>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label for="subscription_end_date" class="form-label">End Date</label>
-                            <input type="date" class="form-control @error('subscription_end_date') is-invalid @enderror" id="subscription_end_date" name="subscription_end_date" value="{{ old('subscription_end_date') }}" readonly>
-                            @error('subscription_end_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="form-text text-muted">Auto-calculated from plan</small>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="subscription_price" class="form-label">Price</label>
-                            <input type="number" step="0.01" min="0" class="form-control @error('subscription_price') is-invalid @enderror" id="subscription_price" name="subscription_price" value="{{ old('subscription_price') }}" placeholder="0.00" readonly disabled>
-                            <input type="hidden" id="subscription_price_hidden" name="subscription_price" value="{{ old('subscription_price') }}">
-                            @error('subscription_price')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="form-text text-muted">Auto-filled from plan</small>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="subscription_status" class="form-label">Status</label>
-                            <select class="form-select @error('subscription_status') is-invalid @enderror" id="subscription_status" name="subscription_status">
-                                <option value="">Select Status</option>
-                                <option value="active" {{ old('subscription_status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
-                                <option value="expired" {{ old('subscription_status') == 'expired' ? 'selected' : '' }}>Expired</option>
-                                <option value="cancelled" {{ old('subscription_status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            </select>
-                            @error('subscription_status')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="subscription_payment_status" class="form-label">Payment Status</label>
-                            <select class="form-select @error('subscription_payment_status') is-invalid @enderror" id="subscription_payment_status" name="subscription_payment_status">
-                                <option value="">Select Payment Status</option>
-                                <option value="pending" {{ old('subscription_payment_status', 'pending') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="paid" {{ old('subscription_payment_status') == 'paid' ? 'selected' : '' }}>Paid</option>
-                                <option value="overdue" {{ old('subscription_payment_status') == 'overdue' ? 'selected' : '' }}>Overdue</option>
-                            </select>
-                            @error('subscription_payment_status')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="subscription_payment_method" class="form-label">Payment Method</label>
-                            <input type="text" class="form-control @error('subscription_payment_method') is-invalid @enderror" id="subscription_payment_method" name="subscription_payment_method" value="{{ old('subscription_payment_method') }}" placeholder="e.g., Cash, Card, GCash">
-                            @error('subscription_payment_method')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-12">
-                            <label for="subscription_notes" class="form-label">Subscription Notes</label>
-                            <textarea class="form-control @error('subscription_notes') is-invalid @enderror" id="subscription_notes" name="subscription_notes" rows="2">{{ old('subscription_notes') }}</textarea>
-                            @error('subscription_notes')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-12">
-                            <hr>
-                            <h5 class="card-title">Keyfob Information (Optional)</h5>
-                        </div>
-
-                        <div class="col-md-12">
-                            <label for="keyfob_id" class="form-label">Assign Keyfob</label>
-                            <select class="form-select @error('keyfob_id') is-invalid @enderror" id="keyfob_id" name="keyfob_id">
-                                <option value="">Select Keyfob (Optional)</option>
-                                @foreach($availableKeyfobs as $keyfob)
-                                    <option value="{{ $keyfob->id }}" {{ old('keyfob_id') == $keyfob->id ? 'selected' : '' }}>
-                                        {{ $keyfob->card_number }} - {{ $keyfob->type == 'keyfob' ? 'Key Fob' : 'Card' }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('keyfob_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="form-text text-muted">Select an available keyfob to assign to this member</small>
-                        </div>
-
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Create Member</button>
-                            <a href="{{ route('members.index') }}" class="btn btn-secondary">Cancel</a>
+                        <div class="col-12 mt-4">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Save Member
+                                </button>
+                                <a href="{{ route('members.index') }}" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </a>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -314,63 +181,4 @@
 </section>
 
 @endsection
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const planSelect = document.getElementById('subscription_plan_id');
-    const startDateInput = document.getElementById('subscription_start_date');
-    const endDateInput = document.getElementById('subscription_end_date');
-    const priceInput = document.getElementById('subscription_price');
-    const priceHiddenInput = document.getElementById('subscription_price_hidden');
-
-    const calculateEndDate = () => {
-        const selectedOption = planSelect.options[planSelect.selectedIndex];
-        const startDateValue = startDateInput.value;
-
-        if (!selectedOption.value || !startDateValue) {
-            endDateInput.value = '';
-            return;
-        }
-
-        const price = selectedOption.getAttribute('data-price');
-        const duration = parseInt(selectedOption.getAttribute('data-duration'));
-
-        if (price) {
-            priceInput.value = price;
-            priceHiddenInput.value = price;
-        } else {
-            priceInput.value = '';
-            priceHiddenInput.value = '';
-        }
-
-        if (!duration || Number.isNaN(duration)) {
-            endDateInput.value = '';
-            return;
-        }
-
-        const startDate = new Date(startDateValue);
-        if (Number.isNaN(startDate.getTime())) {
-            endDateInput.value = '';
-            return;
-        }
-
-        const endDate = new Date(startDate);
-        endDate.setMonth(endDate.getMonth() + duration);
-
-        const endYear = endDate.getFullYear();
-        const endMonth = String(endDate.getMonth() + 1).padStart(2, '0');
-        const endDay = String(endDate.getDate()).padStart(2, '0');
-        endDateInput.value = `${endYear}-${endMonth}-${endDay}`;
-    };
-
-    planSelect.addEventListener('change', calculateEndDate);
-    startDateInput.addEventListener('change', calculateEndDate);
-
-    if (planSelect.value && startDateInput.value) {
-        calculateEndDate();
-    }
-});
-</script>
-@endpush
 

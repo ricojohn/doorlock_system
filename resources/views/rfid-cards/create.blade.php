@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="pagetitle">
-    <h1>Register RFID Card / Key Fob</h1>
+    <h1>Register Key Fob</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
@@ -18,7 +18,7 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Card / Key Fob Information</h5>
+                    <h5 class="card-title">Key Fob Information</h5>
 
                     <form action="{{ route('rfid-cards.store') }}" method="POST" class="row g-3">
                         @csrf
@@ -29,18 +29,7 @@
                             @error('card_number')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <small class="form-text text-muted">Enter the unique RFID card or key fob number</small>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
-                            <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
-                                <option value="card" {{ old('type', 'card') == 'card' ? 'selected' : '' }}>RFID Card</option>
-                                <option value="keyfob" {{ old('type') == 'keyfob' ? 'selected' : '' }}>Key Fob</option>
-                            </select>
-                            @error('type')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <small class="form-text text-muted">Enter the unique key fob number</small>
                         </div>
 
                         <div class="col-md-6">
@@ -65,14 +54,6 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="payment_method" class="form-label">Payment Method</label>
-                            <input type="text" class="form-control @error('payment_method') is-invalid @enderror" id="payment_method" name="payment_method" value="{{ old('payment_method') }}" placeholder="e.g., Cash, Card, GCash">
-                            @error('payment_method')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6">
                             <label for="issued_at" class="form-label">Issued Date <span class="text-danger">*</span></label>
                             <input type="date" class="form-control @error('issued_at') is-invalid @enderror" id="issued_at" name="issued_at" value="{{ old('issued_at', now()->format('Y-m-d')) }}" required>
                             @error('issued_at')
@@ -91,14 +72,14 @@
 
                         <div class="col-12">
                             <label for="notes" class="form-label">Notes</label>
-                            <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" rows="3" placeholder="Additional notes about this card/key fob">{{ old('notes') }}</textarea>
+                            <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" rows="3" placeholder="Additional notes about this key fob">{{ old('notes') }}</textarea>
                             @error('notes')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Register Card / Key Fob</button>
+                            <button type="submit" class="btn btn-primary">Register Key Fob</button>
                             <a href="{{ route('rfid-cards.index') }}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>

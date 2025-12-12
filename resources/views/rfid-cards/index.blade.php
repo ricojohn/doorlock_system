@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="pagetitle">
-    <h1>RFID Card / Key Fob Management</h1>
+    <h1>Key Fob Management</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
@@ -31,8 +31,7 @@
                         <table class="table table-hover datatable" id="rfid-cards-table">
                             <thead>
                                 <tr>
-                                    <th scope="col">Card Number</th>
-                                    <th scope="col">Type</th>
+                                    <th scope="col">Key Fob Number</th>
                                     <th scope="col">Member</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Issued Date</th>
@@ -44,13 +43,6 @@
                                 @foreach ($rfidCards as $rfidCard)
                                     <tr>
                                         <td><strong>{{ $rfidCard->card_number }}</strong></td>
-                                        <td>
-                                            @if($rfidCard->type == 'card')
-                                                <span class="badge bg-info">Card</span>
-                                            @else
-                                                <span class="badge bg-primary">Key Fob</span>
-                                            @endif
-                                        </td>
                                         <td>
                                             @if($rfidCard->member)
                                                 <a href="{{ route('members.show', $rfidCard->member) }}">

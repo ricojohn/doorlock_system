@@ -15,7 +15,9 @@ class RfidCardController extends Controller
      */
     public function index(): View
     {
-        $rfidCards = RfidCard::with('member')->latest()->paginate(10);
+        $rfidCards = RfidCard::with('member')
+            ->orderBy('card_number')
+            ->get();
 
         return view('rfid-cards.index', compact('rfidCards'));
     }
@@ -33,10 +35,16 @@ class RfidCardController extends Controller
      */
     public function store(StoreRfidCardRequest $request): RedirectResponse
     {
-        RfidCard::create($request->validated());
+        $data = $request->validated();
 
-        return redirect()->route('rfid-cards.index')
-            ->with('success', 'RFID card registered successfully.');
+        RfidCard::create(array_merge([
+            'status' => $data['status'] ?? 'active',
+            'type' => 'keyfob',
+        ], $data));
+
+        return redirect()
+            ->route('rfid-cards.index')
+            ->with('success', 'Key fob saved.');
     }
 
     /**
@@ -54,8 +62,6 @@ class RfidCardController extends Controller
      */
     public function edit(RfidCard $rfidCard): View
     {
-        $rfidCard->load('member');
-
         return view('rfid-cards.edit', compact('rfidCard'));
     }
 
@@ -64,10 +70,16 @@ class RfidCardController extends Controller
      */
     public function update(UpdateRfidCardRequest $request, RfidCard $rfidCard): RedirectResponse
     {
-        $rfidCard->update($request->validated());
+        $data = $request->validated();
 
-        return redirect()->route('rfid-cards.index')
-            ->with('success', 'RFID card updated successfully.');
+        $rfidCard->update(array_merge([
+            'status' => $data['status'] ?? 'active',
+            'type' => 'keyfob',
+        ], $data));
+
+        return redirect()
+            ->route('rfid-cards.show', $rfidCard)
+            ->with('success', 'Key fob updated.');
     }
 
     /**
@@ -77,7 +89,8 @@ class RfidCardController extends Controller
     {
         $rfidCard->delete();
 
-        return redirect()->route('rfid-cards.index')
-            ->with('success', 'RFID card deleted successfully.');
+        return redirect()
+            ->route('rfid-cards.index')
+            ->with('success', 'Key fob deleted.');
     }
 }

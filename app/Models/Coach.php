@@ -20,16 +20,60 @@ class Coach extends Model
         'last_name',
         'email',
         'phone',
+        'date_of_birth',
+        'gender',
         'specialty',
+        'house_number',
+        'street',
+        'barangay',
+        'city',
+        'state',
+        'postal_code',
+        'country',
         'status',
-        'notes',
     ];
 
     /**
-     * Get the members assigned to the coach.
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
      */
-    public function members(): HasMany
+    protected function casts(): array
     {
-        return $this->hasMany(Member::class);
+        return [
+            'date_of_birth' => 'date',
+        ];
+    }
+
+    /**
+     * Get the member's full name.
+     */
+    public function getFullNameAttribute(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+
+    /**
+     * Get the work histories for the coach.
+     */
+    public function workHistories(): HasMany
+    {
+        return $this->hasMany(CoachWorkHistory::class);
+    }
+
+    /**
+     * Get the certificates for the coach.
+     */
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(CoachCertificate::class);
+    }
+
+    /**
+     * Get the PT session plans for the coach.
+     */
+    public function ptSessionPlans(): HasMany
+    {
+        return $this->hasMany(PtSessionPlan::class);
     }
 }

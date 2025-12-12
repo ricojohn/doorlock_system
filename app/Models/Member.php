@@ -24,9 +24,6 @@ class Member extends Model
         'date_of_birth',
         'gender',
         'status',
-        'coach_id',
-        'pt_billing_type',
-        'pt_rate',
         'house_number',
         'street',
         'barangay',
@@ -45,7 +42,6 @@ class Member extends Model
     {
         return [
             'date_of_birth' => 'date',
-            'pt_rate' => 'decimal:2',
         ];
     }
 
@@ -55,33 +51,6 @@ class Member extends Model
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
-    }
-
-    /**
-     * Get the subscriptions for the member.
-     */
-    public function subscriptions()
-    {
-        return $this->hasMany(Subscription::class);
-    }
-
-    /**
-     * Get the active subscription for the member.
-     */
-    public function activeSubscription()
-    {
-        return $this->hasOne(Subscription::class)
-            ->where('status', 'active')
-            ->where('end_date', '>=', now()->toDateString())
-            ->latest();
-    }
-
-    /**
-     * Get the latest subscription for the member (regardless of status).
-     */
-    public function latestSubscription()
-    {
-        return $this->hasOne(Subscription::class)->latestOfMany();
     }
 
     /**
@@ -107,10 +76,48 @@ class Member extends Model
     }
 
     /**
-     * Get the coach assigned to the member.
+     * Get the member subscriptions for the member.
      */
-    public function coach()
+    public function memberSubscriptions(): HasMany
     {
-        return $this->belongsTo(Coach::class);
+        return $this->hasMany(MemberSubscription::class);
+    }
+
+    /**
+     * Get the active subscription for the member.
+     */
+    public function activeSubscription(): HasOne
+    {
+        return $this->hasOne(MemberSubscription::class)
+            ->where('payment_status', '!=', 'overdue')
+            ->where('end_date', '>=', now()->toDateString())
+            ->latest();
+    }
+
+    /**
+     * Get the active member subscription for the member.
+     */
+    public function activeMemberSubscription(): HasOne
+    {
+        return $this->hasOne(MemberSubscription::class)
+            ->where('end_date', '>=', now()->toDateString())
+            ->where('payment_status', '!=', 'overdue')
+            ->latest();
+    }
+
+    /**
+     * Get the PT session plans for the member.
+     */
+    public function ptSessionPlans(): HasMany
+    {
+        return $this->hasMany(PtSessionPlan::class);
+    }
+
+    /**
+     * Get the access logs for the member.
+     */
+    public function accessLogs(): HasMany
+    {
+        return $this->hasMany(AccessLog::class);
     }
 }

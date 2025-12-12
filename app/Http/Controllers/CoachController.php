@@ -15,7 +15,9 @@ class CoachController extends Controller
      */
     public function index(): View
     {
-        $coaches = Coach::withCount('members')->latest()->paginate(10);
+        $coaches = Coach::with(['workHistories', 'certificates'])
+            ->orderBy('first_name')
+            ->get();
 
         return view('coaches.index', compact('coaches'));
     }
@@ -33,9 +35,34 @@ class CoachController extends Controller
      */
     public function store(StoreCoachRequest $request): RedirectResponse
     {
-        Coach::create($request->validated());
+        $data = $request->validated();
 
-        return redirect()->route('coaches.index')
+        // Extract work histories and certificates
+        $workHistories = $data['work_histories'] ?? [];
+        $certificates = $data['certificates'] ?? [];
+
+        // Remove from main data
+        unset($data['work_histories'], $data['certificates']);
+
+        // Create coach
+        $coach = Coach::create($data);
+
+        // Create work histories
+        foreach ($workHistories as $workHistory) {
+            if (! empty($workHistory['company_name'])) {
+                $coach->workHistories()->create($workHistory);
+            }
+        }
+
+        // Create certificates
+        foreach ($certificates as $certificate) {
+            if (! empty($certificate['certificate_name'])) {
+                $coach->certificates()->create($certificate);
+            }
+        }
+
+        return redirect()
+            ->route('coaches.index')
             ->with('success', 'Coach created successfully.');
     }
 
@@ -44,7 +71,7 @@ class CoachController extends Controller
      */
     public function show(Coach $coach): View
     {
-        $coach->load('members');
+        $coach->load(['workHistories', 'certificates']);
 
         return view('coaches.show', compact('coach'));
     }
@@ -54,6 +81,8 @@ class CoachController extends Controller
      */
     public function edit(Coach $coach): View
     {
+        $coach->load(['workHistories', 'certificates']);
+
         return view('coaches.edit', compact('coach'));
     }
 
@@ -62,9 +91,38 @@ class CoachController extends Controller
      */
     public function update(UpdateCoachRequest $request, Coach $coach): RedirectResponse
     {
-        $coach->update($request->validated());
+        $data = $request->validated();
 
-        return redirect()->route('coaches.index')
+        // Extract work histories and certificates
+        $workHistories = $data['work_histories'] ?? [];
+        $certificates = $data['certificates'] ?? [];
+
+        // Remove from main data
+        unset($data['work_histories'], $data['certificates']);
+
+        // Update coach
+        $coach->update($data);
+
+        // Delete existing work histories and certificates
+        $coach->workHistories()->delete();
+        $coach->certificates()->delete();
+
+        // Create new work histories
+        foreach ($workHistories as $workHistory) {
+            if (! empty($workHistory['company_name'])) {
+                $coach->workHistories()->create($workHistory);
+            }
+        }
+
+        // Create new certificates
+        foreach ($certificates as $certificate) {
+            if (! empty($certificate['certificate_name'])) {
+                $coach->certificates()->create($certificate);
+            }
+        }
+
+        return redirect()
+            ->route('coaches.index')
             ->with('success', 'Coach updated successfully.');
     }
 
@@ -75,7 +133,8 @@ class CoachController extends Controller
     {
         $coach->delete();
 
-        return redirect()->route('coaches.index')
+        return redirect()
+            ->route('coaches.index')
             ->with('success', 'Coach deleted successfully.');
     }
 }

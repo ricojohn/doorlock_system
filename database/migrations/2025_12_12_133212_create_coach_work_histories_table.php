@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('coach_work_histories', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->decimal('price', 10, 2);
-            $table->integer('duration_days');
+            $table->foreignId('coach_id')->constrained('coaches')->cascadeOnDelete();
+            $table->string('company_name');
+            $table->string('position');
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
             $table->text('description')->nullable();
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('plans');
+        Schema::dropIfExists('coach_work_histories');
     }
 };

@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('coaches', function (Blueprint $table) {
+        Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('email')->unique();
-            $table->string('phone')->nullable();
-            $table->string('specialty')->nullable();
+            $table->string('name');
+            $table->decimal('price', 10, 2);
+            $table->integer('duration_months');
             $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->text('notes')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('coaches');
+        Schema::dropIfExists('subscriptions');
     }
 };

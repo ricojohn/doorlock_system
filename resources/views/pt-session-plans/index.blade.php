@@ -3,11 +3,11 @@
 @section('content')
 
 <div class="pagetitle">
-    <h1>Subscription Management</h1>
+    <h1>PT Session Plans</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-            <li class="breadcrumb-item active">Subscriptions</li>
+            <li class="breadcrumb-item active">PT Session Plans</li>
         </ol>
     </nav>
 </div>
@@ -19,49 +19,55 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex flex-column gap-2">
-                            <h5 class="card-title">Subscriptions List</h5>
+                            <h5 class="card-title">PT Session Plans List</h5>
                             <div class="d-flex gap-2 align-items-center">
-                                <a href="{{ route('subscriptions.create') }}" class="btn btn-sm btn-primary">
-                                    <i class="bi bi-plus-circle"></i> Create Subscription
+                                <a href="{{ route('pt-session-plans.create') }}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-plus-circle"></i> Create PT Session Plan
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover table-bordered" id="subscriptions-table">
+                        <table class="table table-hover table-bordered" id="pt-session-plans-table">
                             <thead>
                                 <tr class="table-light">
-                                    <th>Name</th>
-                                    <th>Price</th>
-                                    <th>Duration (Months)</th>
+                                    <th>Plan Name</th>
+                                    <th>Coach</th>
+                                    <th>Member</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
                                     <th>Status</th>
-                                    <th>Description</th>
+                                    <th>Price</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($subscriptions as $subscription)
+                                @foreach ($ptSessionPlans as $plan)
                                     <tr>
-                                        <td><strong>{{ $subscription->name }}</strong></td>
-                                        <td>₱{{ number_format($subscription->price, 2) }}</td>
-                                        <td>{{ $subscription->duration_months }}</td>
+                                        <td><strong>{{ $plan->name }}</strong></td>
+                                        <td>{{ $plan->coach->full_name }}</td>
+                                        <td>{{ $plan->member->full_name }}</td>
+                                        <td>{{ $plan->start_date->format('M d, Y') }}</td>
+                                        <td>{{ $plan->end_date ? $plan->end_date->format('M d, Y') : 'N/A' }}</td>
                                         <td>
-                                            @if($subscription->status === 'active')
+                                            @if($plan->status === 'active')
                                                 <span class="badge bg-success">Active</span>
+                                            @elseif($plan->status === 'completed')
+                                                <span class="badge bg-info">Completed</span>
                                             @else
-                                                <span class="badge bg-secondary">Inactive</span>
+                                                <span class="badge bg-secondary">Cancelled</span>
                                             @endif
                                         </td>
-                                        <td>{{ $subscription->description ?? 'N/A' }}</td>
+                                        <td>{{ $plan->price ? '₱' . number_format($plan->price, 2) : 'N/A' }}</td>
                                         <td>
                                             <div class="d-flex flex-wrap gap-2">
-                                                <a href="{{ route('subscriptions.show', $subscription) }}" class="btn btn-info" title="View">
+                                                <a href="{{ route('pt-session-plans.show', $plan) }}" class="btn btn-info" title="View">
                                                     <i class="bi bi-eye"></i> View
                                                 </a>
-                                                <a href="{{ route('subscriptions.edit', $subscription) }}" class="btn btn-warning" title="Edit">
+                                                <a href="{{ route('pt-session-plans.edit', $plan) }}" class="btn btn-warning" title="Edit">
                                                     <i class="bi bi-pencil"></i> Edit
                                                 </a>
-                                                <form action="{{ route('subscriptions.destroy', $subscription) }}" method="POST" class="d-inline delete-form">
+                                                <form action="{{ route('pt-session-plans.destroy', $plan) }}" method="POST" class="d-inline delete-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger" title="Delete">

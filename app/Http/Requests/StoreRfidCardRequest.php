@@ -24,10 +24,8 @@ class StoreRfidCardRequest extends FormRequest
         return [
             'member_id' => ['nullable', 'exists:members,id'],
             'card_number' => ['required', 'string', 'max:255', 'unique:rfid_cards,card_number'],
-            'type' => ['required', 'in:card,keyfob'],
             'status' => ['nullable', 'in:active,inactive,lost,stolen'],
             'price' => ['nullable', 'numeric', 'min:0'],
-            'payment_method' => ['nullable', 'string', 'max:100'],
             'issued_at' => ['required', 'date'],
             'expires_at' => ['nullable', 'date', 'after:issued_at'],
             'notes' => ['nullable', 'string'],
@@ -43,10 +41,8 @@ class StoreRfidCardRequest extends FormRequest
     {
         return [
             'member_id.exists' => 'The selected member does not exist.',
-            'card_number.required' => 'Card number is required.',
-            'card_number.unique' => 'This card number is already registered.',
-            'type.required' => 'Please select a card type.',
-            'type.in' => 'Please select a valid card type.',
+            'card_number.required' => 'Key fob number is required.',
+            'card_number.unique' => 'This key fob number is already registered.',
             'status.in' => 'Please select a valid status.',
             'issued_at.required' => 'Issue date is required.',
             'issued_at.date' => 'Please enter a valid issue date.',

@@ -29,9 +29,6 @@ class StoreMemberRequest extends FormRequest
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'gender' => ['nullable', 'in:male,female,other'],
             'status' => ['nullable', 'in:active,inactive,suspended'],
-            'coach_id' => ['nullable', 'exists:coaches,id'],
-            'pt_billing_type' => ['nullable', 'in:per_session,per_month'],
-            'pt_rate' => ['nullable', 'numeric', 'min:0', 'required_with:pt_billing_type'],
             'house_number' => ['nullable', 'string', 'max:255'],
             'street' => ['nullable', 'string', 'max:255'],
             'barangay' => ['nullable', 'string', 'max:255'],
@@ -39,15 +36,6 @@ class StoreMemberRequest extends FormRequest
             'state' => ['nullable', 'string', 'max:255'],
             'postal_code' => ['nullable', 'string', 'max:255'],
             'country' => ['nullable', 'string', 'max:255'],
-            'subscription_plan_id' => ['nullable', 'exists:plans,id'],
-            'subscription_start_date' => ['nullable', 'date', 'required_with:subscription_plan_id'],
-            'subscription_end_date' => ['nullable', 'date', 'after:subscription_start_date', 'required_with:subscription_plan_id'],
-            'subscription_price' => ['nullable', 'numeric', 'min:0', 'required_with:subscription_plan_id'],
-            'subscription_status' => ['nullable', 'in:active,expired,cancelled'],
-            'subscription_payment_status' => ['nullable', 'in:paid,pending,overdue'],
-            'subscription_payment_method' => ['nullable', 'string', 'max:100', 'required_with:subscription_plan_id'],
-            'subscription_notes' => ['nullable', 'string'],
-            'keyfob_id' => ['nullable', 'exists:rfid_cards,id'],
         ];
     }
 

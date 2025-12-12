@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Subscription extends Model
+class PtSessionPlanItem extends Model
 {
     use HasFactory;
 
@@ -15,11 +16,15 @@ class Subscription extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'price',
-        'duration_months',
-        'status',
-        'description',
+        'pt_session_plan_id',
+        'exercise_name',
+        'sets',
+        'reps',
+        'weight',
+        'duration_minutes',
+        'rest_period_seconds',
+        'notes',
+        'order',
     ];
 
     /**
@@ -30,15 +35,15 @@ class Subscription extends Model
     protected function casts(): array
     {
         return [
-            'price' => 'decimal:2',
+            'weight' => 'decimal:2',
         ];
     }
 
     /**
-     * Get the member subscriptions for this subscription template.
+     * Get the PT session plan that owns the item.
      */
-    public function memberSubscriptions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function ptSessionPlan(): BelongsTo
     {
-        return $this->hasMany(MemberSubscription::class);
+        return $this->belongsTo(PtSessionPlan::class);
     }
 }

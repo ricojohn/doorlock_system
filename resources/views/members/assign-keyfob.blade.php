@@ -42,11 +42,11 @@
                                 <select class="form-select @error('keyfob_id') is-invalid @enderror" id="keyfob_id" name="keyfob_id" required>
                                     <option value="">Select a Keyfob</option>
                                     @foreach($availableKeyfobs as $keyfob)
-                                        <option value="{{ $keyfob->id }}" {{ old('keyfob_id') == $keyfob->id ? 'selected' : '' }}>
-                                            {{ $keyfob->card_number }} - {{ $keyfob->type == 'keyfob' ? 'Key Fob' : 'Card' }}
-                                            @if($keyfob->issued_at)
-                                                (Issued: {{ $keyfob->issued_at->format('M d, Y') }})
-                                            @endif
+                                        <option 
+                                            value="{{ $keyfob->id }}" 
+                                            data-price="{{ $keyfob->price ?? '' }}"
+                                            {{ old('keyfob_id') == $keyfob->id ? 'selected' : '' }}>
+                                            {{ $keyfob->card_number }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -54,6 +54,32 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                                 <small class="form-text text-muted">Select an available keyfob to assign to {{ $member->full_name }}</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="price" class="form-label">Price</label>
+                                <input type="number" step="0.01" min="0" class="form-control @error('price') is-invalid @enderror" id="price" name="price" value="{{ old('price') }}" placeholder="0.00" readonly>
+                                @error('price')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="form-text text-muted">Auto-populated from selected keyfob</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="issued_at" class="form-label">Issued Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control @error('issued_at') is-invalid @enderror" id="issued_at" name="issued_at" value="{{ old('issued_at', now()->format('Y-m-d')) }}" required readonly>
+                                @error('issued_at')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="form-text text-muted">Auto-populated with current date</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="payment_method" class="form-label">Payment Method</label>
+                                <input type="text" class="form-control @error('payment_method') is-invalid @enderror" id="payment_method" name="payment_method" value="{{ old('payment_method') }}" placeholder="e.g., Cash, Card, GCash">
+                                @error('payment_method')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-12">
@@ -84,4 +110,29 @@
 </section>
 
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const keyfobSelect = document.getElementById('keyfob_id');
+        const priceInput = document.getElementById('price');
+
+        keyfobSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const price = selectedOption.getAttribute('data-price');
+            
+            if (price && price !== '') {
+                priceInput.value = parseFloat(price).toFixed(2);
+            } else {
+                priceInput.value = '';
+            }
+        });
+
+        // Trigger change on page load if keyfob is pre-selected
+        if (keyfobSelect.value) {
+            keyfobSelect.dispatchEvent(new Event('change'));
+        }
+    });
+</script>
+@endpush
 
