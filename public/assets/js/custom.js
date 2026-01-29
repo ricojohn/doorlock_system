@@ -25,6 +25,9 @@ $(document).ready(function () {
                         { extend: 'pdf', className: 'dropdown-item' },
                     ]
                 }
+            ],
+            order: [
+                [0, 'desc']
             ]
         };
 
