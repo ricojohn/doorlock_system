@@ -14,8 +14,7 @@ class AccessLogController extends Controller
     public function index(): View
     {
         $accessLogs = AccessLog::with(['rfidCard', 'member'])
-            ->orderBy('created_at', 'asc')
-            ->get();
+            ->paginate(20);
 
         return view('access-logs.index', compact('accessLogs'));
     }
@@ -27,7 +26,6 @@ class AccessLogController extends Controller
     public function recent(): JsonResponse
     {
         $logs = AccessLog::with(['rfidCard', 'member'])
-            ->orderBy('created_at', 'asc')
             ->limit(10)
             ->get()
             ->map(function ($log) {
