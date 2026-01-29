@@ -14,8 +14,8 @@ class AccessLogController extends Controller
     public function index(): View
     {
         $accessLogs = AccessLog::with(['rfidCard', 'member'])
-            ->orderBy('accessed_at', 'desc')
-            ->paginate(20);
+            ->orderBy('accessed_at', 'asc')
+            ->get();
 
         return view('access-logs.index', compact('accessLogs'));
     }
