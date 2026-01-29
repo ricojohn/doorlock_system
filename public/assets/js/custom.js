@@ -32,47 +32,12 @@ $(document).ready(function () {
         table.buttons().container().appendTo('#exportButtons');
     }
 
-    function initDataTableWithFilter(selector, emptyMessage) {
-        if ($(selector).length === 0) return;
-
-        const config = {
-            dom: '',
-            language: {
-                emptyTable: emptyMessage,
-                zeroRecords: emptyMessage,
-                searchPlaceholder: 'Search'
-            },
-            pageLength: 10,
-            responsive: true,
-            buttons: [
-                {
-                    extend: 'collection',
-                    text: '<i class="bi bi-file-earmark-excel"></i> Export',
-                    className: 'btn btn-success btn-sm',
-                    buttons: [
-                        { extend: 'copy', className: 'dropdown-item' },
-                        { extend: 'csv', className: 'dropdown-item' },
-                        { extend: 'excel', className: 'dropdown-item' },
-                        { extend: 'pdf', className: 'dropdown-item' },
-                    ]
-                }
-            ],
-            order: [
-                [0, 'desc'],
-            ],
-
-        };
-
-        const table = new DataTable(selector, config);
-        table.buttons().container().appendTo('#exportButtons');
-    }
-
     // Initialize all tables
     initDataTable('#members-table', 'No Member Available');
     initDataTable('#subscriptions-table', 'No Subscription Available');
     initDataTable('#plans-table', 'No Plan Available');
     initDataTable('#coaches-table', 'No Coach Available');
-    initDataTableWithFilter('#access-logs-table', 'No Access Log Available');
+    initDataTable('#access-logs-table', 'No Access Log Available');
 
     // Phone number format PH
     const contactInput = document.getElementById('phone');
