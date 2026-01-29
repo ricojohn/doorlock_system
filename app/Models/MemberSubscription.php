@@ -24,6 +24,7 @@ class MemberSubscription extends Model
         'price',
         'payment_type',
         'payment_status',
+        'status',
         'notes',
     ];
 

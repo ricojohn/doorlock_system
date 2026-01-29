@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('subscription_type');
             $table->date('start_date');
             $table->date('end_date');
+            $table->enum('status', ['active', 'expired'])->default('active');
             $table->decimal('price', 10, 2);
             $table->string('payment_type')->nullable();
             $table->enum('payment_status', ['paid', 'pending', 'overdue'])->default('pending');

@@ -96,12 +96,10 @@
                                                             <tr>
                                                                 <td style="border: 1px solid #dee2e6;">{{ $memberSubscription->subscription->name ?? 'N/A' }}</td>
                                                                 <td style="border: 1px solid #dee2e6;">
-                                                                    @if($memberSubscription->payment_status === 'paid')
-                                                                        <span class="badge bg-success">Paid</span>
-                                                                    @elseif($memberSubscription->payment_status === 'pending')
-                                                                        <span class="badge bg-warning">Pending</span>
-                                                                    @else
-                                                                        <span class="badge bg-danger">Overdue</span>
+                                                                    @if($memberSubscription->status === 'active')
+                                                                        <span class="badge bg-success">Active</span>
+                                                                    @elseif($memberSubscription->status === 'expired')
+                                                                        <span class="badge bg-danger">Expired</span>
                                                                     @endif
                                                                 </td>
                                                                 <td style="border: 1px solid #dee2e6;">
