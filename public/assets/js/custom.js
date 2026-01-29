@@ -36,7 +36,7 @@ $(document).ready(function () {
         if ($(selector).length === 0) return;
 
         const config = {
-            dom: 'lfrtip',
+            dom: '',
             language: {
                 emptyTable: emptyMessage,
                 zeroRecords: emptyMessage,
@@ -58,7 +58,7 @@ $(document).ready(function () {
                 }
             ],
             order: [
-                [0, 'asc'],
+                [0, 'desc'],
             ],
 
         };
