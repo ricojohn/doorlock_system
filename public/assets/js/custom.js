@@ -27,7 +27,7 @@ $(document).ready(function () {
                 }
             ],
             order: [
-                [0, 'asc']
+                [0, 'desc']
             ]
         };
 
