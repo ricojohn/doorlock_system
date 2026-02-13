@@ -61,7 +61,8 @@ class RfidValidationController extends Controller
         $member = $rfidCard->member;
         $memberId = $member->id;
         $memberName = $member->full_name;
-
+        $activeSubscription = $member->activeMemberSubscription;
+        
         // Check if card is active
         if ($rfidCard->status !== 'active') {
             $reason = 'Card is '.$rfidCard->status;
@@ -89,7 +90,7 @@ class RfidValidationController extends Controller
         }
 
         // Check if member has an active subscription
-        if (! $member->activeMemberSubscription()) {
+        if (! $activeSubscription) {
             $reason = 'Member has no active subscription';
             $this->logAccess($cardNumber, $rfidCard->id, $memberId, 'denied', $reason, $ipAddress, $memberName);
 
