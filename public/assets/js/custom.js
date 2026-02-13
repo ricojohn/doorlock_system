@@ -26,9 +26,9 @@ $(document).ready(function () {
                     ]
                 }
             ],
-            order: [
-                [0, 'desc']
-            ]
+            // order: [
+            //     [0, 'desc']
+            // ]
         };
 
         const table = new DataTable(selector, config);
