@@ -27,9 +27,6 @@ $(document).ready(function () {
                     ]
                 }
             ],
-            // order: [
-            //     [0, 'desc']
-            // ]
         };
 
         const table = new DataTable(selector, config);
@@ -41,7 +38,7 @@ $(document).ready(function () {
     initDataTable('#subscriptions-table', 'No Subscription Available');
     initDataTable('#plans-table', 'No Plan Available');
     initDataTable('#coaches-table', 'No Coach Available');
-    initDataTable('#access-logs-table', 'No Access Log Available');
+    // initDataTable('#access-logs-table', 'No Access Log Available');
 
     // Phone number format PH
     const contactInput = document.getElementById('phone');
