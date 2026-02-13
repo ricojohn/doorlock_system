@@ -11,6 +11,7 @@ $(document).ready(function () {
                 zeroRecords: emptyMessage,
                 searchPlaceholder: 'Search'
             },
+            ordering: false,
             pageLength: 10,
             responsive: true,
             buttons: [
