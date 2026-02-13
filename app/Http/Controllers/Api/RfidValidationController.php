@@ -88,6 +88,19 @@ class RfidValidationController extends Controller
             ], 403);
         }
 
+        // Check if member has an active subscription
+        if (! $member->activeSubscription()) {
+            $reason = 'Member has no active subscription';
+            $this->logAccess($cardNumber, $rfidCard->id, $memberId, 'denied', $reason, $ipAddress, $memberName);
+
+            return response()->json([
+                'success' => false,
+                'message' => $reason,
+                'access_granted' => false,
+                'member_name' => $memberName,
+            ], 403);
+        }
+
         // All checks passed - access granted
         $accessGranted = true;
         $reason = 'Access granted';
