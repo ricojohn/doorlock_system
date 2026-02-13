@@ -89,8 +89,7 @@ class Member extends Model
     public function activeSubscription(): HasOne
     {
         return $this->hasOne(MemberSubscription::class)
-            ->where('payment_status', '!=', 'overdue')
-            ->where('end_date', '>=', now()->toDateString())
+            ->where('status', 'active')
             ->latest();
     }
 
@@ -100,8 +99,7 @@ class Member extends Model
     public function activeMemberSubscription(): HasOne
     {
         return $this->hasOne(MemberSubscription::class)
-            ->where('end_date', '>=', now()->toDateString())
-            ->where('payment_status', '!=', 'overdue')
+            ->where('status', 'active')
             ->latest();
     }
 
