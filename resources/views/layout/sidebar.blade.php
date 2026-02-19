@@ -3,10 +3,33 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('home') ? '' : 'collapsed' }}" href="{{ route('home') }}">
+        <a class="nav-link {{ request()->routeIs('home') || request()->routeIs('dashboard.*') ? '' : 'collapsed' }}" data-bs-target="#dashboard-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
+          <i class="bi bi-chevron-down ms-auto"></i>
         </a>
+        <ul id="dashboard-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('dashboard.analytics') }}" class="{{ request()->routeIs('home') || request()->routeIs('dashboard.analytics') ? 'active' : '' }}">
+              <i class="bi bi-circle"></i><span>Analytics Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('dashboard.sales') }}" class="{{ request()->routeIs('dashboard.sales') ? 'active' : '' }}">
+              <i class="bi bi-circle"></i><span>Sales Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('dashboard.members') }}" class="{{ request()->routeIs('dashboard.members') ? 'active' : '' }}">
+              <i class="bi bi-circle"></i><span>Member Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('dashboard.coaches') }}" class="{{ request()->routeIs('dashboard.coaches') ? 'active' : '' }}">
+              <i class="bi bi-circle"></i><span>Coach Dashboard</span>
+            </a>
+          </li>
+        </ul>
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
@@ -30,12 +53,19 @@
         </a>
       </li><!-- End Coaches Nav -->
 
-      <li class="nav-item">
+      {{-- <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('pt-session-plans.*') ? '' : 'collapsed' }}" href="{{ route('pt-session-plans.index') }}">
           <i class="bi bi-activity"></i>
           <span>PT Session Plans</span>
         </a>
-      </li><!-- End PT Session Plans Nav -->
+      </li><!-- End PT Session Plans Nav --> --}}
+
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('pt-packages.*') ? '' : 'collapsed' }}" href="{{ route('pt-packages.index') }}">
+          <i class="bi bi-box-seam"></i>
+          <span>PT Packages</span>
+        </a>
+      </li><!-- End PT Packages Nav -->
 
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('rfid-cards.*') ? '' : 'collapsed' }}" href="{{ route('rfid-cards.index') }}">
@@ -50,13 +80,13 @@
           <span>Access Logs</span>
         </a>
       </li><!-- End Access Logs Nav -->
-
+{{-- 
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('wifi-configurations.*') ? '' : 'collapsed' }}" href="{{ route('wifi-configurations.index') }}">
           <i class="bi bi-wifi"></i>
           <span>WiFi Configuration</span>
         </a>
-      </li><!-- End WiFi Configuration Nav -->
+      </li><!-- End WiFi Configuration Nav --> --}}
 
       {{-- <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">

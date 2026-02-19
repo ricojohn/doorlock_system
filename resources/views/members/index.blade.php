@@ -84,7 +84,7 @@
                                         <td style="border: 1px solid #dee2e6;">
                                             <table class="table table-sm table-bordered mb-0">
                                                 <thead>
-                                                    <tr>
+                                                    <tr class="table-primary">
                                                         <th style="border: 1px solid #dee2e6;">Subscription</th>
                                                         <th style="border: 1px solid #dee2e6;">Status</th>
                                                         <th style="border: 1px solid #dee2e6;">Duration</th>
@@ -93,7 +93,7 @@
                                                 <tbody>
                                                     @if($subscriptions->count() > 0)
                                                         @foreach($subscriptions as $memberSubscription)
-                                                            <tr>
+                                                            <tr >
                                                                 <td style="border: 1px solid #dee2e6;">{{ $memberSubscription->subscription->name ?? 'N/A' }}</td>
                                                                 <td style="border: 1px solid #dee2e6;">
                                                                     @if($memberSubscription->status === 'active')
@@ -116,7 +116,32 @@
                                                     @endif
                                                 </tbody>
                                             </table>
+
+                                            <br />
+
+                                            <table class="table table-sm table-bordered mb-0">
+                                                <thead>
+                                                    <tr class="table-primary">
+                                                        <th style="border: 1px solid #dee2e6;">PT Package</th>
+                                                        <th style="border: 1px solid #dee2e6;">Remaining Sessions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if($member->activeMemberPtPackage)
+                                                        <tr>
+                                                            <td style="border: 1px solid #dee2e6;">{{ $member->activeMemberPtPackage->ptPackage->name ?? 'N/A' }}</td>
+                                                            <td style="border: 1px solid #dee2e6;">{{ $member->activeMemberPtPackage->remaining_sessions }}</td>
+                                                        </tr>
+                                                    @else
+                                                        <tr>
+                                                            <td class="text-muted" style="border: 1px solid #dee2e6;">No PT Package</td>
+                                                            <td class="text-muted" style="border: 1px solid #dee2e6;">-</td>
+                                                        </tr>
+                                                    @endif
+                                                </tbody>
+                                            </table>
                                         </td>
+                                        
                                         
                                         <!-- Action Column -->
                                         <td style="border: 1px solid #dee2e6;">
@@ -135,9 +160,16 @@
                                                 <a href="{{ route('subscriptions.create-for-member', $member) }}" class="btn btn-success" title="Add Subscription">
                                                     <i class="bi bi-calendar-check"></i> Add Subscription
                                                 </a>
-                                                <button type="button" class="btn btn-secondary" title="Add PT" disabled>
-                                                    <i class="bi bi-activity"></i> Add PT
-                                                </button>
+                                                @if(!$member->activeMemberPtPackage)
+                                                <a href="{{ route('members.subscribe-pt-package', $member) }}" class="btn btn-secondary" title="Add PT Package">
+                                                    <i class="bi bi-activity"></i> Add PT Package
+                                                </a>
+                                                @endif
+                                                @if($member->activeMemberPtPackage && $member->activeMemberPtPackage->remaining_sessions > 0)
+                                                <a href="{{ route('members.log-pt-session', $member) }}" class="btn btn-primary" title="Log PT Session">
+                                                    <i class="bi bi-clock"></i> Log PT Session
+                                                </a>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>

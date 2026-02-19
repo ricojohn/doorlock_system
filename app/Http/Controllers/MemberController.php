@@ -129,6 +129,22 @@ class MemberController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        // PT Packages & Subscriptions: load for views
+        $member->load([
+            'memberPtPackages.ptPackage',
+            'memberPtPackages.coach',
+            'activeMemberPtPackage',
+            'memberSubscriptions.subscription',
+        ]);
+
+        // Get PT sessions for this member (from all their packages)
+        $ptSessions = \App\Models\PtSession::with(['memberPtPackage.ptPackage', 'memberPtPackage.coach'])
+            ->whereHas('memberPtPackage', function ($q) use ($member) {
+                $q->where('member_id', $member->id);
+            })
+            ->orderBy('conducted_at', 'desc')
+            ->get();
+
         return view('members.show', compact(
             'member',
             'peakHour',
@@ -138,7 +154,8 @@ class MemberController extends Controller
             'subscriptionHistory',
             'activeSubscription',
             'ptSessionPlansHistory',
-            'accessLogs'
+            'accessLogs',
+            'ptSessions'
         ));
     }
 

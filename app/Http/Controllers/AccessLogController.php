@@ -13,7 +13,7 @@ class AccessLogController extends Controller
      */
     public function index(): View
     {
-        $accessLogs = AccessLog::with(['rfidCard', 'member'])->orderBy('id', 'desc')->paginate(20);
+        $accessLogs = AccessLog::with(['rfidCard', 'member'])->orderBy('id', 'desc')->get();
 
         return view('access-logs.index', compact('accessLogs'));
     }

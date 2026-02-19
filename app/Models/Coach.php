@@ -76,4 +76,12 @@ class Coach extends Model
     {
         return $this->hasMany(PtSessionPlan::class);
     }
+
+    /**
+     * Get the member PT package subscriptions assigned to this coach.
+     */
+    public function memberPtPackages(): HasMany
+    {
+        return $this->hasMany(MemberPtPackage::class);
+    }
 }

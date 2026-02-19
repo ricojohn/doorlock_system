@@ -98,8 +98,17 @@ class Member extends Model
      */
     public function activeMemberSubscription(): HasOne
     {
+        $today = now()->toDateString();
+
         return $this->hasOne(MemberSubscription::class)
             ->where('status', 'active')
+            ->where('end_date', '>=', $today)
+            ->where(function ($query) use ($today) {
+                $query->whereNull('frozen_at')
+                    ->orWhereNull('frozen_until')
+                    ->orWhere('frozen_until', '<', $today)
+                    ->orWhere('frozen_at', '>', $today);
+            })
             ->latest();
     }
 
@@ -117,5 +126,29 @@ class Member extends Model
     public function accessLogs(): HasMany
     {
         return $this->hasMany(AccessLog::class);
+    }
+
+    /**
+     * Get the member's PT package subscriptions.
+     */
+    public function memberPtPackages(): HasMany
+    {
+        return $this->hasMany(MemberPtPackage::class);
+    }
+
+    /**
+     * Get the member's active PT package (status active, not past end_date).
+     * Check is_active or remaining_sessions for exhaustion.
+     */
+    public function activeMemberPtPackage(): HasOne
+    {
+        $today = now()->toDateString();
+
+        return $this->hasOne(MemberPtPackage::class)
+            ->where('status', 'active')
+            ->where(function ($query) use ($today) {
+                $query->whereNull('end_date')->orWhere('end_date', '>=', $today);
+            })
+            ->latest();
     }
 }

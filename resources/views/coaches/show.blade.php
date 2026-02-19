@@ -106,6 +106,173 @@
             </div>
         </div>
 
+        
+
+        <!-- PT Sessions & Commission Tabs -->
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">PT Sessions & Commission</h5>
+                    
+                    <!-- Tabs Navigation -->
+                    <ul class="nav nav-tabs nav-tabs-bordered" id="pt-sessions-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="remaining-tab" data-bs-toggle="tab" data-bs-target="#remaining" type="button" role="tab">
+                                <i class="bi bi-clock-history"></i> Remaining Sessions
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="conducted-tab" data-bs-toggle="tab" data-bs-target="#conducted" type="button" role="tab">
+                                <i class="bi bi-activity"></i> Sessions Conducted
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="commission-tab" data-bs-toggle="tab" data-bs-target="#commission" type="button" role="tab">
+                                <i class="bi bi-cash-coin"></i> Commission Summary
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tabs Content -->
+                    <div class="tab-content pt-2" id="pt-sessions-tab-content">
+                        <!-- Remaining Sessions Tab -->
+                        <div class="tab-pane fade show active" id="remaining" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Remaining PT Sessions per Member</h6>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="refreshTab('remaining')">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                            @if(count($remainingSessionsData) > 0)
+                                <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Member</th>
+                                        <th>Package</th>
+                                        <th>Remaining Sessions</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($remainingSessionsData as $data)
+                                        <tr>
+                                            <td><strong>{{ $data['member_name'] }}</strong></td>
+                                            <td>
+                                                @foreach($data['packages'] as $pkg)
+                                                    <div>{{ $pkg['package_name'] }}</div>
+                                                @endforeach
+                                            </td>
+                                            <td><span class="badge bg-info">{{ $data['remaining_sessions'] }}</span></td>
+                                            <td>
+                                                @foreach($data['packages'] as $pkg)
+                                                    <small class="text-muted">
+                                                        {{ $pkg['used'] }}/{{ $pkg['total'] }} used
+                                                        @if($pkg['remaining'] > 0)
+                                                            <span class="badge bg-success">{{ $pkg['remaining'] }} remaining</span>
+                                                        @endif
+                                                    </small><br>
+                                                @endforeach
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <td colspan="2" class="text-end"><strong>Total Remaining Sessions:</strong></td>
+                                        <td colspan="2"><strong>{{ array_sum(array_column($remainingSessionsData, 'remaining_sessions')) }}</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                                </div>
+                            @else
+                                <p class="text-muted mb-0">No active PT packages with remaining sessions found.</p>
+                            @endif
+                        </div>
+
+                        <!-- Sessions Conducted Tab -->
+                        <div class="tab-pane fade" id="conducted" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Sessions Conducted per Member ({{ $startDate->format('M Y') }})</h6>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="refreshTab('conducted')">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                            @if(count($sessionsByMember) > 0)
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Member</th>
+                                                <th>Sessions Conducted</th>
+                                                <th>Total Sessions Used</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($sessionsByMember as $data)
+                                                <tr>
+                                                    <td><strong>{{ $data['member_name'] }}</strong></td>
+                                                    <td><span class="badge bg-success">{{ $data['sessions_conducted'] }}</span></td>
+                                                    <td><span class="badge bg-primary">{{ $data['sessions_used_total'] }}</span></td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                        <tfoot class="table-light">
+                                            <tr>
+                                                <td class="text-end"><strong>Total:</strong></td>
+                                                <td><strong>{{ array_sum(array_column($sessionsByMember, 'sessions_conducted')) }}</strong></td>
+                                                <td><strong>{{ array_sum(array_column($sessionsByMember, 'sessions_used_total')) }}</strong></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            @else
+                                <p class="text-muted mb-0">No PT sessions conducted in {{ $startDate->format('F Y') }}.</p>
+                            @endif
+                        </div>
+
+                        <!-- Commission Summary Tab -->
+                        <div class="tab-pane fade" id="commission" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Commission Summary ({{ $startDate->format('M Y') }})</h6>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="refreshTab('commission')">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card border-primary">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-muted mb-2">Total Sessions</h6>
+                                            <h4 class="text-primary mb-1">{{ $totalSessions }}</h4>
+                                            <small class="text-muted">Sessions conducted this month</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card border-success">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-muted mb-2">Total Commission</h6>
+                                            <h4 class="text-success mb-1">₱{{ number_format($totalCommission, 2) }}</h4>
+                                            <small class="text-muted">Earned this month</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card border-info">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-muted mb-2">Active Members</h6>
+                                            <h4 class="text-info mb-1">{{ count($remainingSessionsData) }}</h4>
+                                            <small class="text-muted">With remaining sessions</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         @if($coach->workHistories->count() > 0)
         <div class="col-lg-12">
             <div class="card">
@@ -177,4 +344,50 @@
 </section>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle tab change and refresh
+    const tabButtons = document.querySelectorAll('#pt-sessions-tabs button[data-bs-toggle="tab"]');
+    
+    tabButtons.forEach(function(button) {
+        button.addEventListener('shown.bs.tab', function(event) {
+            // Tab has been shown, you can add any refresh logic here if needed
+            const targetTab = event.target.getAttribute('data-bs-target');
+            console.log('Tab changed to:', targetTab);
+        });
+    });
+});
+
+function refreshTab(tabName) {
+    // Show loading state
+    const refreshBtn = event.target.closest('button');
+    if (refreshBtn) {
+        const originalHtml = refreshBtn.innerHTML;
+        refreshBtn.disabled = true;
+        refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Refreshing...';
+        
+        // Reload the page to refresh all data
+        setTimeout(function() {
+            window.location.reload();
+        }, 300);
+    }
+}
+
+// Add spin animation for refresh button
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .spin {
+        animation: spin 1s linear infinite;
+        display: inline-block;
+    }
+`;
+document.head.appendChild(style);
+</script>
+@endpush
 

@@ -2,14 +2,15 @@
 
 @section('content')
 <div class="pagetitle">
-    <h1>Dashboard</h1>
-    <p class="mb-0 text-muted">Reporting with a custom date range across member activity and revenue.</p>
+    <h1>Analytics Dashboard</h1>
+    <p class="mb-0 text-muted">Check-ins, peak hours, and total revenue for the selected date range.</p>
 </div>
 
 <section class="section dashboard">
-    <div class="card mb-4">
+    <div class="card mb-4 pt-3">
         <div class="card-body">
-            <form class="row g-3 align-items-end" method="GET" action="{{ route('home') }}">
+            <span class="text-muted ms-auto small">Range applies to every report below.</span>
+            <form class="row g-3 align-items-end" method="GET" action="{{ route('dashboard.analytics') }}">
                 <div class="col-md-3">
                     <label for="start_date" class="form-label">Start date</label>
                     <input type="date" id="start_date" name="start_date" class="form-control" value="{{ old('start_date', request('start_date', $filters['start_date'])) }}">
@@ -20,8 +21,8 @@
                 </div>
                 <div class="col-md-6 d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Apply range</button>
-                    <a href="{{ route('home') }}" class="btn btn-outline-secondary">Reset</a>
-                    <span class="text-muted ms-auto small">Range applies to every report below.</span>
+                    <a href="{{ route('dashboard.analytics') }}" class="btn btn-outline-secondary">Reset</a>
+                    
                 </div>
             </form>
         </div>
@@ -48,14 +49,14 @@
         <div class="col-xxl-3 col-md-6">
             <div class="card info-card revenue-card">
                 <div class="card-body">
-                    <h5 class="card-title">Revenue <span>| Paid</span></h5>
+                    <h5 class="card-title">Total Revenue <span>| Range</span></h5>
                     <div class="d-flex align-items-center">
                         <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                             <i class="bi bi-currency-dollar"></i>
                         </div>
                         <div class="ps-3">
                             <h6>₱{{ number_format($revenue, 2) }}</h6>
-                            <span class="text-muted small pt-1 d-block">Paid subscriptions in range</span>
+                            <span class="text-muted small pt-1 d-block">Subscriptions, PT, keyfobs in range</span>
                         </div>
                     </div>
                 </div>
@@ -73,6 +74,23 @@
                         <div class="ps-3">
                             <h6>{{ number_format($totalCheckins) }}</h6>
                             <span class="text-muted small pt-1 d-block">Access granted within range</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xxl-3 col-md-6">
+            <div class="card info-card peak-hour-card">
+                <div class="card-body">
+                    <h5 class="card-title">Peak Hour</h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-clock"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ $peakHourSummary?->hour_label ?? 'N/A' }} — {{ $peakHourEstimatedPresent ?? 0 }} people</h6>
+                            <span class="text-muted small pt-1 d-block">{{ $peakHourSummary?->checkins_count ?? 0 }} check-ins · {{ $estimatedSessionMinutes ?? 60 }} min session</span>
                         </div>
                     </div>
                 </div>
@@ -106,6 +124,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Peak Hours</h5>
+                    <p class="text-muted small mb-2">Check-ins per hour of day (entries, not concurrent)</p>
                     <div id="peakHoursChart"></div>
                 </div>
             </div>

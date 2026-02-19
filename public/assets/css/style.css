@@ -975,6 +975,11 @@ textarea.form-control {
   color: #4154f1;
   background: #f6f6fe;
 }
+  
+.dashboard .peak-hour-card .card-icon {
+  color: #ff771d;
+  background: #ffecdf;
+}
 
 .dashboard .revenue-card .card-icon {
   color: #2eca6a;
@@ -1396,4 +1401,9 @@ textarea.form-control {
   text-align: center;
   font-size: 12px;
   color: #012970;
+}
+
+/* Sidebar Edit */
+.collapse {
+  visibility: visible !important;
 }

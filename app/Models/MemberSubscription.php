@@ -26,6 +26,8 @@ class MemberSubscription extends Model
         'payment_status',
         'status',
         'notes',
+        'frozen_at',
+        'frozen_until',
     ];
 
     /**
@@ -38,8 +40,35 @@ class MemberSubscription extends Model
         return [
             'start_date' => 'date',
             'end_date' => 'date',
+            'frozen_at' => 'date',
+            'frozen_until' => 'date',
             'price' => 'decimal:2',
         ];
+    }
+
+    /**
+     * Whether the subscription is currently frozen (today is between frozen_at and frozen_until).
+     */
+    public function getIsFrozenAttribute(): bool
+    {
+        if (! $this->frozen_at || ! $this->frozen_until) {
+            return false;
+        }
+        $today = now()->toDateString();
+
+        return $today >= $this->frozen_at->toDateString() && $today <= $this->frozen_until->toDateString();
+    }
+
+    /**
+     * Whether the subscription is currently active for access (not expired, not frozen).
+     */
+    public function getIsCurrentlyActiveAttribute(): bool
+    {
+        if ($this->status !== 'active' || $this->end_date->lt(now())) {
+            return false;
+        }
+
+        return ! $this->is_frozen;
     }
 
     /**

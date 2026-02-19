@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FreezeMemberSubscriptionRequest;
 use App\Http\Requests\StoreSubscriptionRequest;
 use App\Http\Requests\UpdateSubscriptionRequest;
 use App\Models\Member;
@@ -131,5 +132,49 @@ class SubscriptionController extends Controller
         return redirect()
             ->route('members.show', $member)
             ->with('success', 'Subscription added to member successfully.');
+    }
+
+    /**
+     * Show the form to freeze a member subscription.
+     */
+    public function freeze(MemberSubscription $memberSubscription): View
+    {
+        $memberSubscription->load(['member', 'subscription']);
+
+        return view('subscriptions.freeze', compact('memberSubscription'));
+    }
+
+    /**
+     * Store freeze for a member subscription.
+     */
+    public function storeFreeze(FreezeMemberSubscriptionRequest $request, MemberSubscription $memberSubscription): RedirectResponse
+    {
+        $member = $memberSubscription->member;
+
+        $memberSubscription->update([
+            'frozen_at' => now()->toDateString(),
+            'frozen_until' => $request->validated('frozen_until'),
+        ]);
+
+        return redirect()
+            ->route('members.show', $member)
+            ->with('success', 'Subscription frozen successfully.');
+    }
+
+    /**
+     * Unfreeze a member subscription.
+     */
+    public function unfreeze(MemberSubscription $memberSubscription): RedirectResponse
+    {
+        $member = $memberSubscription->member;
+
+        $memberSubscription->update([
+            'frozen_at' => null,
+            'frozen_until' => null,
+        ]);
+
+        return redirect()
+            ->route('members.show', $member)
+            ->with('success', 'Subscription unfrozen successfully.');
     }
 }
