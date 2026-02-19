@@ -95,7 +95,13 @@
                                                     @if($subscriptions->count() > 0)
                                                         <tr>
                                                             <td style="border: 1px solid #dee2e6;">{{ $subscriptions->subscription->name ?? 'N/A' }}</td>
-                                                            <td style="border: 1px solid #dee2e6;">{{ $subscriptions->status ?? 'N/A' }}</td>
+                                                            <td style="border: 1px solid #dee2e6;">
+                                                                @if($subscriptions->status === 'active')
+                                                                    <span class="badge bg-success">Active</span>
+                                                                @elseif($subscriptions->status === 'expired')
+                                                                    <span class="badge bg-danger">Expired</span>
+                                                                @endif
+                                                            </td>
                                                             <td style="border: 1px solid #dee2e6;">{{ $subscriptions->start_date->format('M d, Y') }} - {{ $subscriptions->end_date->format('M d, Y') }}</td>
                                                         </tr>
                                                     @else
