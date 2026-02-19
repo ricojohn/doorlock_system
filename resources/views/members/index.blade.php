@@ -94,21 +94,15 @@
                                                 </thead>
                                                 <tbody>
                                                     @if($subscriptions->count() > 0)
-                                                        @foreach($subscriptions as $memberSubscription)
-                                                            <tr >
-                                                                <td style="border: 1px solid #dee2e6;">{{ $memberSubscription->subscription->name ?? 'N/A' }}</td>
-                                                                <td style="border: 1px solid #dee2e6;">
-                                                                    @if($memberSubscription->status === 'active')
-                                                                        <span class="badge bg-success">Active</span>
-                                                                    @elseif($memberSubscription->status === 'expired')
-                                                                        <span class="badge bg-danger">Expired</span>
-                                                                    @endif
-                                                                </td>
-                                                                <td style="border: 1px solid #dee2e6;">
-                                                                    {{ $memberSubscription->start_date->format('M d, Y') }} - {{ $memberSubscription->end_date->format('M d, Y') }}
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
+                                                        <tr>
+                                                            <td style="border: 1px solid #dee2e6;">{{ $subscriptions->latest()->first()->subscription->name ?? 'N/A' }}</td>
+                                                        <td style="border: 1px solid #dee2e6;">
+                                                            @if($subscriptions->latest()->first()->status === 'active')
+                                                                <span class="badge bg-success">Active</span>
+                                                            @elseif($subscriptions->latest()->first()->status === 'expired')
+                                                                <span class="badge bg-danger">Expired</span>
+                                                            @endif
+                                                        </td>
                                                     @else
                                                         <tr>
                                                             <td class="text-muted" style="border: 1px solid #dee2e6;">No Subscription</td>
