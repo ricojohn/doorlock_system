@@ -120,6 +120,8 @@
                                                 <thead>
                                                     <tr class="table-primary">
                                                         <th style="border: 1px solid #dee2e6;">PT Package</th>
+                                                        <th style="border: 1px solid #dee2e6;">Used Sessions</th>
+                                                        <th style="border: 1px solid #dee2e6;">Total Sessions</th>
                                                         <th style="border: 1px solid #dee2e6;">Remaining Sessions</th>
                                                     </tr>
                                                 </thead>
@@ -127,11 +129,15 @@
                                                     @if($member->activeMemberPtPackage)
                                                         <tr>
                                                             <td style="border: 1px solid #dee2e6;">{{ $member->activeMemberPtPackage->ptPackage->name ?? 'N/A' }}</td>
+                                                            <td style="border: 1px solid #dee2e6;">{{ $member->activeMemberPtPackage->sessions_used }}</td>
                                                             <td style="border: 1px solid #dee2e6;">{{ $member->activeMemberPtPackage->remaining_sessions }}</td>
+                                                            <td style="border: 1px solid #dee2e6;">{{ $member->activeMemberPtPackage->sessions_total }}</td>
                                                         </tr>
                                                     @else
                                                         <tr>
                                                             <td class="text-muted" style="border: 1px solid #dee2e6;">No PT Package</td>
+                                                            <td class="text-muted" style="border: 1px solid #dee2e6;">-</td>
+                                                            <td class="text-muted" style="border: 1px solid #dee2e6;">-</td>
                                                             <td class="text-muted" style="border: 1px solid #dee2e6;">-</td>
                                                         </tr>
                                                     @endif
