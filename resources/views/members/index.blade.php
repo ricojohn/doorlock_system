@@ -45,7 +45,7 @@
                                         $subscriptions = $member->memberSubscriptions;
                                     @endphp
 
-                                    {{ dd($subscriptions) }};
+                                    {{-- {{ dd($subscriptions) }}; --}}
                                     <tr>
                                         <!-- Member Column -->
                                         <td style="border: 1px solid #dee2e6;">
