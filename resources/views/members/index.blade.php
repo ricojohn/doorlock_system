@@ -92,7 +92,7 @@
                                                 </thead>
                                                 <tbody>
                                                     @if($subscriptions->count() > 0)
-                                                        @foreach($subscriptions as $memberSubscription)
+                                                        @foreach($activeSubscription as $memberSubscription)
                                                             <tr >
                                                                 <td style="border: 1px solid #dee2e6;">{{ $memberSubscription->subscription->name ?? 'N/A' }}</td>
                                                                 <td style="border: 1px solid #dee2e6;">
