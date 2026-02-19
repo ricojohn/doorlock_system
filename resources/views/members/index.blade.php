@@ -44,6 +44,8 @@
                                         $activeSubscription = $member->activeSubscription;
                                         $subscriptions = $member->memberSubscriptions;
                                     @endphp
+
+                                    {{ dd($subscriptions) }};
                                     <tr>
                                         <!-- Member Column -->
                                         <td style="border: 1px solid #dee2e6;">
@@ -92,7 +94,7 @@
                                                 </thead>
                                                 <tbody>
                                                     @if($subscriptions->count() > 0)
-                                                        @foreach($activeSubscription as $memberSubscription)
+                                                        @foreach($subscriptions as $memberSubscription)
                                                             <tr >
                                                                 <td style="border: 1px solid #dee2e6;">{{ $memberSubscription->subscription->name ?? 'N/A' }}</td>
                                                                 <td style="border: 1px solid #dee2e6;">
