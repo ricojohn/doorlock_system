@@ -98,11 +98,11 @@
                                                             <tr >
                                                                 <td style="border: 1px solid #dee2e6;">{{ $memberSubscription->subscription->name ?? 'N/A' }}</td>
                                                                 <td style="border: 1px solid #dee2e6;">
-                                                                    @if($memberSubscription->status === 'active')
+                                                                    {{-- @if($memberSubscription->status === 'active')
                                                                         <span class="badge bg-success">Active</span>
                                                                     @elseif($memberSubscription->status === 'expired')
                                                                         <span class="badge bg-danger">Expired</span>
-                                                                    @endif
+                                                                    @endif --}}
                                                                 </td>
                                                                 <td style="border: 1px solid #dee2e6;">
                                                                     {{ $memberSubscription->start_date->format('M d, Y') }} - {{ $memberSubscription->end_date->format('M d, Y') }}
