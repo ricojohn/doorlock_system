@@ -92,7 +92,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @if($subscriptions->count() > 0)
+                                                    @if($subscriptions)
                                                         <tr>
                                                             <td style="border: 1px solid #dee2e6;">{{ $subscriptions->subscription->name ?? 'N/A' }}</td>
                                                             <td style="border: 1px solid #dee2e6;">
