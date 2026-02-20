@@ -35,7 +35,7 @@ $(document).ready(function () {
 
     // Initialize all tables
     initDataTable('#members-table', 'No Member Available');
-    initDataTable('#subscriptions-table', 'No Subscription Available');
+    // initDataTable('#subscriptions-table', 'No Subscription Available');
     initDataTable('#plans-table', 'No Plan Available');
     initDataTable('#coaches-table', 'No Coach Available');
     // initDataTable('#access-logs-table', 'No Access Log Available');
