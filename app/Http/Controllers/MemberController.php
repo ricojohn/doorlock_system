@@ -55,9 +55,15 @@ class MemberController extends Controller
             'state',
             'postal_code',
             'country',
-            'invited_by_type',
-            'invited_by_id',
         ]);
+
+        if ($request->filled('invited_by_coach_id')) {
+            $memberData['invited_by_type'] = \App\Models\Coach::class;
+            $memberData['invited_by_id'] = $request->input('invited_by_coach_id');
+        } elseif ($request->filled('invited_by_member_id')) {
+            $memberData['invited_by_type'] = \App\Models\Member::class;
+            $memberData['invited_by_id'] = $request->input('invited_by_member_id');
+        }
 
         $member = Member::create(array_merge(
             [

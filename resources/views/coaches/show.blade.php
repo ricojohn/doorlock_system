@@ -108,10 +108,86 @@
             </div>
         </div>
 
+        <!-- Invited Members & Guest Conversions -->
+        <div class="col-lg-6 mt-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Invited members</h5>
+                    <p class="text-muted small">Members who were referred by this coach.</p>
+                    @if ($invitedMembers->isNotEmpty())
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Member</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($invitedMembers as $m)
+                                        <tr>
+                                            <td>{{ $m->full_name }}</td>
+                                            <td class="text-end">
+                                                <a href="{{ route('members.show', $m) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-muted mb-0">No invited members.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-6 mt-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Guests converted to members</h5>
+                    <p class="text-muted small">Guests invited by this coach who became members.</p>
+                    @if ($guestsConverted->isNotEmpty())
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Guest</th>
+                                        <th>Member</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($guestsConverted as $guest)
+                                        <tr>
+                                            <td>{{ $guest->full_name }}</td>
+                                            <td>
+                                                @if ($guest->member)
+                                                    <a href="{{ route('members.show', $guest->member) }}">{{ $guest->member->full_name }}</a>
+                                                @else
+                                                    —
+                                                @endif
+                                            </td>
+                                            <td class="text-end">
+                                                <a href="{{ route('guests.show', $guest) }}" class="btn btn-sm btn-outline-secondary">Guest</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-muted mb-0">No guest conversions yet.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+
         
 
         <!-- PT Sessions & Commission Tabs -->
-        <div class="col-lg-12">
+        <div class="col-lg-12 mt-3">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">PT Sessions & Commission</h5>

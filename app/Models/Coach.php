@@ -106,6 +106,6 @@ class Coach extends Model
      */
     public function invitedMembers(): MorphMany
     {
-        return $this->morphMany(Member::class, 'invitedBy');
+        return $this->morphMany(Member::class, 'invited_by');
     }
 }

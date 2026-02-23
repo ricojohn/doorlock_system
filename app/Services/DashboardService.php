@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AccessLog;
 use App\Models\Coach;
+use App\Models\Guest;
 use App\Models\Member;
 use App\Models\MemberPtPackage;
 use App\Models\MemberSubscription;
@@ -266,7 +267,7 @@ class DashboardService
     {
         $totalCoaches = Coach::count();
         $activeCoaches = Coach::where('status', 'active')->count();
-        $allCoaches = Coach::orderBy('first_name')->get();
+        $allCoaches = Coach::orderBy('user_id')->get();
 
         $memberPtPackagesQuery = MemberPtPackage::with(['member', 'coach', 'ptPackage', 'ptSessions'])
             ->where('status', 'active')
@@ -371,6 +372,24 @@ class DashboardService
         usort($sessionsByCoachMember, fn ($a, $b) => strcmp($a['coach_name'], $b['coach_name']) ?: strcmp($a['member_name'], $b['member_name']));
         usort($commissionByCoach, fn ($a, $b) => strcmp($a['coach_name'], $b['coach_name']));
 
+        $coachLeadStats = [];
+        foreach ($allCoaches as $c) {
+            $guestsInvited = Guest::where('inviter_type', Coach::class)->where('inviter_id', $c->id)->count();
+            $guestsConverted = Guest::where('inviter_type', Coach::class)->where('inviter_id', $c->id)->where('status', 'converted')->count();
+            $invitedMembers = Member::where('invited_by_type', Coach::class)->where('invited_by_id', $c->id)->count();
+            $conversionPercent = $guestsInvited > 0 ? round(($guestsConverted / $guestsInvited) * 100, 1) : 0;
+
+            $coachLeadStats[] = [
+                'coach_id' => $c->id,
+                'coach_name' => $c->full_name ?? 'N/A',
+                'invited_members_count' => $invitedMembers,
+                'guests_invited_count' => $guestsInvited,
+                'guests_converted_count' => $guestsConverted,
+                'conversion_rate_percent' => $conversionPercent,
+            ];
+        }
+        usort($coachLeadStats, fn ($a, $b) => strcmp($a['coach_name'], $b['coach_name']));
+
         return [
             'filters' => [
                 'start_date' => $startDate->toDateString(),
@@ -383,6 +402,7 @@ class DashboardService
             'remainingSessionsData' => $remainingSessionsData,
             'sessionsByCoachMember' => $sessionsByCoachMember,
             'commissionByCoach' => $commissionByCoach,
+            'coachLeadStats' => $coachLeadStats,
         ];
     }
 }

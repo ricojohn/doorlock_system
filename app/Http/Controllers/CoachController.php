@@ -15,7 +15,10 @@ class CoachController extends Controller
      */
     public function show(Coach $coach): View
     {
-        $coach->load(['user', 'workHistories', 'certificates']);
+        $coach->load(['user', 'workHistories', 'certificates', 'invitedMembers', 'invitedGuests']);
+
+        $invitedMembers = $coach->invitedMembers()->orderBy('first_name')->get();
+        $guestsConverted = $coach->invitedGuests()->where('status', 'converted')->with('member')->orderByDesc('updated_at')->get();
 
         $startDate = Carbon::now()->startOfMonth()->startOfDay();
         $endDate = Carbon::now()->endOfDay();
@@ -99,6 +102,8 @@ class CoachController extends Controller
 
         return view('coaches.show', compact(
             'coach',
+            'invitedMembers',
+            'guestsConverted',
             'remainingSessionsData',
             'sessionsByMember',
             'totalCommission',

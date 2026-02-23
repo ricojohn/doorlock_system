@@ -73,6 +73,64 @@
         </div>
     </div>
 
+    <!-- Invited Members & Guest Conversion -->
+    @php
+        $leadStats = isset($coachLeadStats) ? $coachLeadStats : [];
+        $dashboardFilters = $filters ?? [];
+        if (!empty($dashboardFilters['coach_id'])) {
+            $leadStats = array_filter($leadStats, fn($s) => (int)$s['coach_id'] === (int)$dashboardFilters['coach_id']);
+        }
+    @endphp
+    <div class="row mt-4">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Invited Members & Guest Conversion</h5>
+                    <p class="text-muted small mb-3">Per coach: members referred, guests invited, guests converted to members, and conversion rate.</p>
+                    @if(count($leadStats) > 0)
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Coach</th>
+                                        <th>Invited Members</th>
+                                        <th>Guests Invited</th>
+                                        <th>Guests Converted</th>
+                                        <th>Conversion Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($leadStats as $s)
+                                        <tr>
+                                            <td><strong>{{ $s['coach_name'] }}</strong></td>
+                                            <td><span class="badge bg-secondary">{{ $s['invited_members_count'] }}</span></td>
+                                            <td><span class="badge bg-info">{{ $s['guests_invited_count'] }}</span></td>
+                                            <td><span class="badge bg-success">{{ $s['guests_converted_count'] }}</span></td>
+                                            <td><span class="badge bg-primary">{{ $s['conversion_rate_percent'] }}%</span></td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                @if(empty($dashboardFilters['coach_id']) && count($coachLeadStats ?? []) > 0)
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <td class="text-end"><strong>Totals:</strong></td>
+                                        <td><strong>{{ array_sum(array_column($coachLeadStats, 'invited_members_count')) }}</strong></td>
+                                        <td><strong>{{ array_sum(array_column($coachLeadStats, 'guests_invited_count')) }}</strong></td>
+                                        <td><strong>{{ array_sum(array_column($coachLeadStats, 'guests_converted_count')) }}</strong></td>
+                                        <td>—</td>
+                                    </tr>
+                                </tfoot>
+                                @endif
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-muted mb-0">No coach lead data available.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Remaining PT Sessions per Member -->
     <div class="row">
         <div class="col-lg-12">
