@@ -78,6 +78,40 @@
                         </div>
                         
                         <div class="col-md-4">
+                            <div class="small text-muted">Invited by</div>
+                            <div>
+                                @if ($member->invitedBy)
+                                    @if ($member->invitedBy instanceof \App\Models\Coach)
+                                        <a href="{{ route('coaches.show', $member->invitedBy) }}">{{ $member->invitedBy->full_name }}</a>
+                                        <span class="badge bg-secondary">Coach</span>
+                                    @else
+                                        <a href="{{ route('members.show', $member->invitedBy) }}">{{ $member->invitedBy->full_name }}</a>
+                                        <span class="badge bg-secondary">Member</span>
+                                    @endif
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="small text-muted">Converted by</div>
+                            <div>
+                                @if ($member->convertedByUser)
+                                    {{ $member->convertedByUser->full_name ?? $member->convertedByUser->name }}
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </div>
+                        </div>
+                        @if ($member->guest)
+                        <div class="col-md-4">
+                            <div class="small text-muted">Converted from guest</div>
+                            <div>
+                                <a href="{{ route('guests.show', $member->guest) }}">Guest #{{ $member->guest->id }}</a>
+                            </div>
+                        </div>
+                        @endif
+                        <div class="col-md-4">
                             <div class="small text-muted">Created At</div>
                             <div>{{ $member->created_at->format('F d, Y h:i A') }}</div>
                         </div>

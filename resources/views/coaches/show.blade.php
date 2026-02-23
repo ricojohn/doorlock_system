@@ -7,7 +7,7 @@
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('coaches.index') }}">Coaches</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('staff.index') }}">Staff</a></li>
             <li class="breadcrumb-item active">View</li>
         </ol>
     </nav>
@@ -21,10 +21,12 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="card-title mb-0">Coach Information</h5>
                         <div>
-                            <a href="{{ route('coaches.edit', $coach) }}" class="btn btn-warning">
-                                <i class="bi bi-pencil"></i> Edit
+                            @if ($coach->user)
+                            <a href="{{ route('staff.edit', $coach->user) }}" class="btn btn-warning">
+                                <i class="bi bi-pencil"></i> Edit staff
                             </a>
-                            <a href="{{ route('coaches.index') }}" class="btn btn-secondary">
+                            @endif
+                            <a href="{{ route('staff.index') }}" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left"></i> Back
                             </a>
                         </div>
@@ -42,7 +44,7 @@
 
                     <div class="row">
                         <div class="col-lg-3 col-md-4 label">Email</div>
-                        <div class="col-lg-9 col-md-8">{{ $coach->email }}</div>
+                        <div class="col-lg-9 col-md-8">{{ $coach->user?->email ?? 'N/A' }}</div>
                     </div>
 
                     <div class="row">

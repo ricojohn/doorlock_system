@@ -2,6 +2,7 @@
 
     <ul class="sidebar-nav" id="sidebar-nav">
 
+      @can('view_dashboard')
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('home') || request()->routeIs('dashboard.*') ? '' : 'collapsed' }}" data-bs-target="#dashboard-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-grid"></i>
@@ -31,27 +32,42 @@
           </li>
         </ul>
       </li><!-- End Dashboard Nav -->
+      @endcan
 
+      @can('manage_members')
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('members.*') ? '' : 'collapsed' }}" href="{{ route('members.index') }}">
           <i class="bi bi-people"></i>
           <span>Members</span>
         </a>
       </li><!-- End Members Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('guests.*') ? '' : 'collapsed' }}" href="{{ route('guests.index') }}">
+          <i class="bi bi-person-plus"></i>
+          <span>Guests</span>
+        </a>
+      </li><!-- End Guests Nav -->
+      @endcan
 
+      @can('manage_coaches')
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('staff.*') ? '' : 'collapsed' }}" href="{{ route('staff.index') }}">
+          <i class="bi bi-person-badge"></i>
+          <span>Staff</span>
+        </a>
+      </li><!-- End Staff Nav -->
+      @endcan
+
+      @can('manage_subscriptions')
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('subscriptions.*') ? '' : 'collapsed' }}" href="{{ route('subscriptions.index') }}">
           <i class="bi bi-calendar-check"></i>
           <span>Subscriptions</span>
         </a>
       </li><!-- End Subscriptions Nav -->
+      @endcan
 
-      <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('coaches.*') ? '' : 'collapsed' }}" href="{{ route('coaches.index') }}">
-          <i class="bi bi-person-badge"></i>
-          <span>Coaches</span>
-        </a>
-      </li><!-- End Coaches Nav -->
+      
 
       {{-- <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('pt-session-plans.*') ? '' : 'collapsed' }}" href="{{ route('pt-session-plans.index') }}">
@@ -60,33 +76,50 @@
         </a>
       </li><!-- End PT Session Plans Nav --> --}}
 
+      @can('manage_pt_packages')
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('pt-packages.*') ? '' : 'collapsed' }}" href="{{ route('pt-packages.index') }}">
           <i class="bi bi-box-seam"></i>
           <span>PT Packages</span>
         </a>
       </li><!-- End PT Packages Nav -->
+      @endcan
 
+      @can('manage_rfid_cards')
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('rfid-cards.*') ? '' : 'collapsed' }}" href="{{ route('rfid-cards.index') }}">
           <i class="bi bi-credit-card"></i>
           <span>RFID Cards / Key Fobs</span>
         </a>
       </li><!-- End RFID Cards Nav -->
+      @endcan
 
+      @can('view_access_logs')
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('access-logs.*') ? '' : 'collapsed' }}" href="{{ route('access-logs.index') }}">
           <i class="bi bi-clock-history"></i>
           <span>Access Logs</span>
         </a>
       </li><!-- End Access Logs Nav -->
+      @endcan
 
+      @can('manage_settings')
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('settings.*') ? '' : 'collapsed' }}" href="{{ route('settings.edit') }}">
           <i class="bi bi-gear"></i>
           <span>Settings</span>
         </a>
       </li><!-- End Settings Nav -->
+      @endcan
+
+      @can('manage_roles')
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('roles-permissions.*') ? '' : 'collapsed' }}" href="{{ route('roles-permissions.index') }}">
+          <i class="bi bi-shield-lock"></i>
+          <span>Roles & Permissions</span>
+        </a>
+      </li><!-- End Roles & Permissions Nav -->
+      @endcan
 {{-- 
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('wifi-configurations.*') ? '' : 'collapsed' }}" href="{{ route('wifi-configurations.index') }}">

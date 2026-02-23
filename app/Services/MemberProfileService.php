@@ -23,6 +23,9 @@ class MemberProfileService
             'memberPtPackages.ptPackage',
             'memberPtPackages.coach',
             'activeMemberPtPackage',
+            'invitedBy',
+            'convertedByUser',
+            'guest',
         ]);
 
         $accessLogs = AccessLog::where('member_id', $member->id)

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AssignKeyfobRequest;
 use App\Http\Requests\StoreMemberRequest;
 use App\Http\Requests\UpdateMemberRequest;
+use App\Models\Coach;
 use App\Models\Member;
 use App\Models\RfidCard;
 use App\Services\MemberProfileService;
@@ -28,7 +29,10 @@ class MemberController extends Controller
      */
     public function create(): View
     {
-        return view('members.create');
+        $coaches = Coach::with('user')->get()->sortBy('full_name');
+        $members = Member::orderBy('first_name')->get();
+
+        return view('members.create', compact('coaches', 'members'));
     }
 
     /**
@@ -51,10 +55,15 @@ class MemberController extends Controller
             'state',
             'postal_code',
             'country',
+            'invited_by_type',
+            'invited_by_id',
         ]);
 
         $member = Member::create(array_merge(
-            ['status' => $memberData['status'] ?? 'active'],
+            [
+                'status' => $memberData['status'] ?? 'active',
+                'converted_by_user_id' => auth()->id(),
+            ],
             $memberData
         ));
 

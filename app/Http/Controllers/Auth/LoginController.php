@@ -24,7 +24,24 @@ class LoginController extends Controller
      */
     public function login(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        // Throttle login attempts to prevent brute force attacks
+        $throttleKey = str()->transliterate($request->input('email')).'|'.$request->ip();
+        if (app('cache')->has('login:attempts:'.$throttleKey) && app('cache')->get('login:attempts:'.$throttleKey) >= 5) {
+            return back()->withErrors([
+                'email' => __('Too many login attempts. Please try again in :seconds seconds.', [
+                    'seconds' => app('cache')->get('login:timeout:'.$throttleKey, 60),
+                ]),
+            ]);
+        }
+
+        try {
+            $request->authenticate();
+        } catch (AuthenticationException $e) {
+            app('cache')->put('login:attempts:'.$throttleKey, app('cache')->get('login:attempts:'.$throttleKey, 0) + 1, 60);
+            return back()->withErrors([
+                'email' => $e->getMessage(),
+            ]);
+        }
 
         $request->session()->regenerate();
 

@@ -36,6 +36,8 @@ class StoreMemberRequest extends FormRequest
             'state' => ['nullable', 'string', 'max:255'],
             'postal_code' => ['nullable', 'string', 'max:255'],
             'country' => ['nullable', 'string', 'max:255'],
+            'invited_by_type' => ['nullable', 'in:App\Models\Coach,App\Models\Member'],
+            'invited_by_id' => ['nullable', 'integer', 'min:1', 'required_with:invited_by_type'],
         ];
     }
 

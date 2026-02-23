@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Coach extends Model
 {
@@ -16,9 +18,7 @@ class Coach extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'first_name',
-        'last_name',
-        'email',
+        'user_id',
         'phone',
         'date_of_birth',
         'gender',
@@ -46,11 +46,19 @@ class Coach extends Model
     }
 
     /**
-     * Get the member's full name.
+     * Get the coach's full name (from linked user).
      */
     public function getFullNameAttribute(): string
     {
-        return "{$this->first_name} {$this->last_name}";
+        return $this->user?->full_name ?? 'N/A';
+    }
+
+    /**
+     * Get the user that owns the coach profile.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -83,5 +91,21 @@ class Coach extends Model
     public function memberPtPackages(): HasMany
     {
         return $this->hasMany(MemberPtPackage::class);
+    }
+
+    /**
+     * Get the guests invited by this coach.
+     */
+    public function invitedGuests(): MorphMany
+    {
+        return $this->morphMany(Guest::class, 'inviter');
+    }
+
+    /**
+     * Get the members invited by this coach (member's invited_by points to this coach).
+     */
+    public function invitedMembers(): MorphMany
+    {
+        return $this->morphMany(Member::class, 'invitedBy');
     }
 }

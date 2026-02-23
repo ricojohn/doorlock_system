@@ -100,6 +100,26 @@
                             @enderror
                         </div>
 
+                        <!-- Optional: Who invited / referred this member -->
+                        <div class="col-12 mt-4">
+                            <h6 class="text-primary border-bottom pb-2 mb-3">
+                                <i class="bi bi-person-plus"></i> Lead (optional)
+                            </h6>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Invited by type</label>
+                            <select name="invited_by_type" id="invited_by_type" class="form-select">
+                                <option value="">None</option>
+                                <option value="App\Models\Coach" @selected(old('invited_by_type') === 'App\Models\Coach')>Coach</option>
+                                <option value="App\Models\Member" @selected(old('invited_by_type') === 'App\Models\Member')>Member</option>
+                            </select>
+                        </div>
+                        
+
+                        
+                        
+
                         <!-- Additional Information Section -->
                         <div class="col-12 mt-4">
                             <h6 class="text-primary border-bottom pb-2 mb-3">
@@ -173,6 +193,7 @@
                                 </a>
                             </div>
                         </div>
+                        
                     </form>
                 </div>
             </div>

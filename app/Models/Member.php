@@ -4,8 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Member extends Model
 {
@@ -17,6 +20,10 @@ class Member extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'guest_id',
+        'invited_by_type',
+        'invited_by_id',
+        'converted_by_user_id',
         'first_name',
         'last_name',
         'email',
@@ -32,6 +39,38 @@ class Member extends Model
         'postal_code',
         'country',
     ];
+
+    /**
+     * Get the guest this member was converted from (if any).
+     */
+    public function guest(): BelongsTo
+    {
+        return $this->belongsTo(Guest::class);
+    }
+
+    /**
+     * Get the inviter (Coach or Member) who referred this member.
+     */
+    public function invitedBy(): MorphTo
+    {
+        return $this->morphTo('invitedBy');
+    }
+
+    /**
+     * Get the user (staff) who converted this member.
+     */
+    public function convertedByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'converted_by_user_id');
+    }
+
+    /**
+     * Get the members invited by this member (member's invited_by points to this member).
+     */
+    public function invitedMembers(): MorphMany
+    {
+        return $this->morphMany(Member::class, 'invitedBy');
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -126,6 +165,14 @@ class Member extends Model
     public function accessLogs(): HasMany
     {
         return $this->hasMany(AccessLog::class);
+    }
+
+    /**
+     * Get the guests invited by this member.
+     */
+    public function invitedGuests(): MorphMany
+    {
+        return $this->morphMany(Guest::class, 'inviter');
     }
 
     /**
