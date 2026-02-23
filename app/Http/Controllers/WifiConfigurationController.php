@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreWifiConfigurationRequest;
+use App\Http\Requests\UpdateWifiConfigurationRequest;
 use App\Models\WifiConfiguration;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class WifiConfigurationController extends Controller
@@ -32,17 +33,11 @@ class WifiConfigurationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreWifiConfigurationRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'ssid' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:500'],
-            'is_active' => ['nullable', 'boolean'],
-        ]);
+        $validated = $request->validated();
 
-        // If this is set as active, deactivate all others
-        if ($request->has('is_active') && $request->is_active) {
+        if (! empty($validated['is_active'])) {
             WifiConfiguration::where('is_active', true)->update(['is_active' => false]);
         }
 
@@ -63,17 +58,11 @@ class WifiConfigurationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, WifiConfiguration $wifiConfiguration): RedirectResponse
+    public function update(UpdateWifiConfigurationRequest $request, WifiConfiguration $wifiConfiguration): RedirectResponse
     {
-        $validated = $request->validate([
-            'ssid' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:500'],
-            'is_active' => ['nullable', 'boolean'],
-        ]);
+        $validated = $request->validated();
 
-        // If this is set as active, deactivate all others
-        if ($request->has('is_active') && $request->is_active) {
+        if (! empty($validated['is_active'])) {
             WifiConfiguration::where('id', '!=', $wifiConfiguration->id)
                 ->where('is_active', true)
                 ->update(['is_active' => false]);

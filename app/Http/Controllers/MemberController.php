@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AssignKeyfobRequest;
 use App\Http\Requests\StoreMemberRequest;
 use App\Http\Requests\UpdateMemberRequest;
-use App\Models\AccessLog;
 use App\Models\Member;
 use App\Models\RfidCard;
+use App\Services\MemberProfileService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\DB;
 
 class MemberController extends Controller
 {
@@ -65,98 +65,11 @@ class MemberController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Member $member): View
+    public function show(Member $member, MemberProfileService $profileService): View
     {
-        $member->load(['activeRfidCard', 'memberSubscriptions.subscription', 'ptSessionPlans.coach']);
+        $data = $profileService->getDataForShow($member);
 
-        // Get access logs for this member (only granted access)
-        $accessLogs = AccessLog::where('member_id', $member->id)
-            ->where('access_granted', 'granted')
-            ->orderBy('accessed_at', 'desc')
-            ->get();
-
-        // Calculate Peak Hour (hour with most access)
-        $peakHourData = AccessLog::where('member_id', $member->id)
-            ->where('access_granted', 'granted')
-            ->selectRaw('HOUR(accessed_at) as hour, COUNT(*) as count')
-            ->groupBy('hour')
-            ->orderByDesc('count')
-            ->first();
-
-        $peakHour = $peakHourData ? sprintf('%02d:00', $peakHourData->hour) : 'N/A';
-        $peakHourCount = $peakHourData ? $peakHourData->count : 0;
-
-        // Calculate Active Hours (all hours the member has been active)
-        $activeHours = AccessLog::where('member_id', $member->id)
-            ->where('access_granted', 'granted')
-            ->selectRaw('DISTINCT HOUR(accessed_at) as hour')
-            ->orderBy('hour')
-            ->pluck('hour')
-            ->map(fn ($hour) => sprintf('%02d:00', $hour))
-            ->toArray();
-
-        // Calculate Weekly Attendance Count (last 4 weeks) - count unique days
-        $weeklyAttendance = [];
-        for ($i = 3; $i >= 0; $i--) {
-            $weekStart = now()->subWeeks($i)->startOfWeek();
-            $weekEnd = now()->subWeeks($i)->endOfWeek();
-
-            $count = AccessLog::where('member_id', $member->id)
-                ->where('access_granted', 'granted')
-                ->whereBetween('accessed_at', [$weekStart, $weekEnd])
-                ->selectRaw('DATE(accessed_at) as date')
-                ->groupBy(DB::raw('DATE(accessed_at)'))
-                ->count();
-
-            $weeklyAttendance[] = [
-                'week' => $weekStart->format('M d').' - '.$weekEnd->format('M d'),
-                'count' => $count,
-            ];
-        }
-
-        // Get subscription history
-        $subscriptionHistory = $member->memberSubscriptions()
-            ->with('subscription')
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        // Get active subscription
-        $activeSubscription = $member->activeMemberSubscription;
-
-        // Get PT session plans history
-        $ptSessionPlansHistory = $member->ptSessionPlans()
-            ->with(['coach', 'items'])
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        // PT Packages & Subscriptions: load for views
-        $member->load([
-            'memberPtPackages.ptPackage',
-            'memberPtPackages.coach',
-            'activeMemberPtPackage',
-            'memberSubscriptions.subscription',
-        ]);
-
-        // Get PT sessions for this member (from all their packages)
-        $ptSessions = \App\Models\PtSession::with(['memberPtPackage.ptPackage', 'memberPtPackage.coach'])
-            ->whereHas('memberPtPackage', function ($q) use ($member) {
-                $q->where('member_id', $member->id);
-            })
-            ->orderBy('conducted_at', 'desc')
-            ->get();
-
-        return view('members.show', compact(
-            'member',
-            'peakHour',
-            'peakHourCount',
-            'activeHours',
-            'weeklyAttendance',
-            'subscriptionHistory',
-            'activeSubscription',
-            'ptSessionPlansHistory',
-            'accessLogs',
-            'ptSessions'
-        ));
+        return view('members.show', $data);
     }
 
     /**
@@ -202,42 +115,23 @@ class MemberController extends Controller
     /**
      * Store the assigned keyfob to the member.
      */
-    public function storeKeyfob(Member $member): RedirectResponse
+    public function storeKeyfob(AssignKeyfobRequest $request, Member $member): RedirectResponse
     {
-        $keyfobId = request()->input('keyfob_id');
-        $price = request()->input('price');
-        $issuedAt = request()->input('issued_at');
-        $paymentMethod = request()->input('payment_method');
-
-        if (! $keyfobId) {
-            return redirect()->back()
-                ->with('error', 'Please select a keyfob.');
-        }
-
-        $keyfob = RfidCard::find($keyfobId);
-
-        if (! $keyfob) {
-            return redirect()->back()
-                ->with('error', 'Selected keyfob not found.');
-        }
-
-        if ($keyfob->member_id !== null) {
-            return redirect()->back()
-                ->with('error', 'This keyfob is already assigned to another member.');
-        }
+        $data = $request->validated();
+        $keyfob = RfidCard::findOrFail($data['keyfob_id']);
 
         $updateData = [
             'member_id' => $member->id,
-            'issued_at' => $issuedAt ?? now()->toDateString(),
+            'issued_at' => $data['issued_at'],
             'expires_at' => null,
         ];
 
-        if ($price !== null && $price !== '') {
-            $updateData['price'] = $price;
+        if (isset($data['price']) && $data['price'] !== '' && $data['price'] !== null) {
+            $updateData['price'] = $data['price'];
         }
 
-        if ($paymentMethod !== null && $paymentMethod !== '') {
-            $updateData['payment_method'] = $paymentMethod;
+        if (isset($data['payment_method']) && $data['payment_method'] !== '') {
+            $updateData['payment_method'] = $data['payment_method'];
         }
 
         $keyfob->update($updateData);

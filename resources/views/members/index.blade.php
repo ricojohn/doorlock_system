@@ -32,9 +32,10 @@
                         <table class="table table-bordered table-hover" id="members-table" style="border-collapse: collapse;">
                             <thead>
                                 <tr class="table-light">
-                                    <th style="width: 35%; border: 1px solid #dee2e6;">Member</th>
-                                    <th style="width: 35%; border: 1px solid #dee2e6;">Subscription</th>
-                                    <th style="width: 30%; border: 1px solid #dee2e6;">Action</th>
+                                    <th style="width: 20%; border: 1px solid #dee2e6;">Member</th>
+                                    <th style="width: 25%; border: 1px solid #dee2e6;">Subscription</th>
+                                    <th style="width: 30%; border: 1px solid #dee2e6;">PT Package</th>
+                                    <th style="width: 25%; border: 1px solid #dee2e6;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -67,15 +68,6 @@
                                                         @else
                                                             <span class="text-muted">No RFID</span>
                                                         @endif
-                                                    </div>
-                                                </div>
-                                                <!-- Second Column: Coach Info -->
-                                                <div class="col-6">
-                                                    <div class="mb-2">
-                                                        <strong>Coach Information</strong>
-                                                    </div>
-                                                    <div class="text-muted small">
-                                                        N/A
                                                     </div>
                                                 </div>
                                             </div>
@@ -113,9 +105,10 @@
                                                     @endif
                                                 </tbody>
                                             </table>
+                                        </td>
 
-                                            <br />
-
+                                        <!-- PT Package Column -->
+                                        <td style="border: 1px solid #dee2e6;">
                                             <table class="table table-sm table-bordered mb-0">
                                                 <thead>
                                                     <tr class="table-primary">
@@ -128,10 +121,18 @@
                                                 <tbody>
                                                     @if($member->activeMemberPtPackage)
                                                         <tr>
-                                                            <td style="border: 1px solid #dee2e6;">{{ $member->activeMemberPtPackage->ptPackage->name ?? 'N/A' }}</td>
-                                                            <td style="border: 1px solid #dee2e6;">{{ $member->activeMemberPtPackage->sessions_used }}</td>
-                                                            <td style="border: 1px solid #dee2e6;">{{ $member->activeMemberPtPackage->remaining_sessions }}</td>
-                                                            <td style="border: 1px solid #dee2e6;">{{ $member->activeMemberPtPackage->sessions_total }}</td>
+                                                            <td style="border: 1px solid #dee2e6;">
+                                                                {{ $member->activeMemberPtPackage->ptPackage->name ?? 'N/A' }}
+                                                            </td>
+                                                            <td style="border: 1px solid #dee2e6;">
+                                                                {{ $member->activeMemberPtPackage->sessions_used }}
+                                                            </td>
+                                                            <td style="border: 1px solid #dee2e6;">
+                                                                {{ $member->activeMemberPtPackage->sessions_total }}
+                                                            </td>
+                                                            <td style="border: 1px solid #dee2e6;">
+                                                                <span class="badge bg-primary">{{ $member->activeMemberPtPackage->remaining_sessions }}</span>
+                                                            </td>
                                                         </tr>
                                                     @else
                                                         <tr>
@@ -188,34 +189,3 @@
 </section>
 
 @endsection
-
-@push('scripts')
-<script>
-  // Delete confirmation with SweetAlert2
-  document.addEventListener('DOMContentLoaded', function() {
-    const deleteForms = document.querySelectorAll('.delete-form');
-    
-    deleteForms.forEach(form => {
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        Swal.fire({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#dc3545',
-          cancelButtonColor: '#6c757d',
-          confirmButtonText: 'Yes, delete it!',
-          cancelButtonText: 'Cancel'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            form.submit();
-          }
-        });
-      });
-    });
-  });
-</script>
-@endpush
-

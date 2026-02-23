@@ -80,6 +80,13 @@
           <span>Access Logs</span>
         </a>
       </li><!-- End Access Logs Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('settings.*') ? '' : 'collapsed' }}" href="{{ route('settings.edit') }}">
+          <i class="bi bi-gear"></i>
+          <span>Settings</span>
+        </a>
+      </li><!-- End Settings Nav -->
 {{-- 
       <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('wifi-configurations.*') ? '' : 'collapsed' }}" href="{{ route('wifi-configurations.index') }}">

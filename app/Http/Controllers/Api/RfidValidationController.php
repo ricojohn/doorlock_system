@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Events\RfidAccessAttempted;
 use App\Http\Controllers\Controller;
 use App\Models\AccessLog;
-use App\Models\RfidCard;
 use App\Models\WifiConfiguration;
+use App\Services\RfidAccessPolicy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,7 +15,7 @@ class RfidValidationController extends Controller
     /**
      * Validate RFID card and check access permission.
      */
-    public function validate(Request $request): JsonResponse
+    public function validate(Request $request, RfidAccessPolicy $accessPolicy): JsonResponse
     {
         $request->validate([
             'card_number' => ['required', 'string'],
@@ -24,105 +24,19 @@ class RfidValidationController extends Controller
         $cardNumber = $request->input('card_number');
         $ipAddress = $request->ip();
 
-        // Find the RFID card
-        $rfidCard = RfidCard::where('card_number', $cardNumber)
-            ->with(['member'])
-            ->first();
+        $result = $accessPolicy->check($cardNumber);
 
-        $accessGranted = false;
-        $reason = null;
-        $memberName = null;
-        $memberId = null;
+        $this->logAccess(
+            $cardNumber,
+            $result['rfid_card_id'],
+            $result['member_id'],
+            $result['granted'] ? 'granted' : 'denied',
+            $result['reason'],
+            $ipAddress,
+            $result['member_name']
+        );
 
-        // Card not found
-        if (! $rfidCard) {
-            $reason = 'Card not found';
-            $this->logAccess($cardNumber, null, null, 'denied', $reason, $ipAddress);
-
-            return response()->json([
-                'success' => false,
-                'message' => $reason,
-                'access_granted' => false,
-            ], 404);
-        }
-
-        // Check if card is assigned to a member
-        if (! $rfidCard->member_id) {
-            $reason = 'Card not assigned to any member';
-            $this->logAccess($cardNumber, $rfidCard->id, null, 'denied', $reason, $ipAddress);
-
-            return response()->json([
-                'success' => false,
-                'message' => $reason,
-                'access_granted' => false,
-            ], 403);
-        }
-
-        $member = $rfidCard->member;
-        $memberId = $member->id;
-        $memberName = $member->full_name;
-        $activeSubscription = $member->activeMemberSubscription;
-        
-        // Check if card is active
-        if ($rfidCard->status !== 'active') {
-            $reason = 'Card is '.$rfidCard->status;
-            $this->logAccess($cardNumber, $rfidCard->id, $memberId, 'denied', $reason, $ipAddress, $memberName);
-
-            return response()->json([
-                'success' => false,
-                'message' => $reason,
-                'access_granted' => false,
-                'card_status' => $rfidCard->status,
-            ], 403);
-        }
-
-        // Check if card is expired
-        if ($rfidCard->isExpired()) {
-            $reason = 'Card has expired';
-            $this->logAccess($cardNumber, $rfidCard->id, $memberId, 'denied', $reason, $ipAddress, $memberName);
-
-            return response()->json([
-                'success' => false,
-                'message' => $reason,
-                'access_granted' => false,
-                'expires_at' => optional($rfidCard->expires_at)->format('Y-m-d'),
-            ], 403);
-        }
-
-        // Check if member has an active subscription
-        if (! $activeSubscription) {
-            $reason = 'Member has no active subscription';
-            $this->logAccess($cardNumber, $rfidCard->id, $memberId, 'denied', $reason, $ipAddress, $memberName);
-
-            return response()->json([
-                'success' => false,
-                'message' => $reason,
-                'access_granted' => false,
-                'member_name' => $memberName,
-            ], 403);
-        }
-
-        // All checks passed - access granted
-        $accessGranted = true;
-        $reason = 'Access granted';
-        $this->logAccess($cardNumber, $rfidCard->id, $memberId, 'granted', $reason, $ipAddress, $memberName);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Access granted',
-            'access_granted' => true,
-            'member' => [
-                'id' => $member->id,
-                'name' => $member->full_name,
-                'email' => $member->email,
-            ],
-            'card' => [
-                'number' => $rfidCard->card_number,
-                'type' => $rfidCard->type,
-                'issued_at' => optional($rfidCard->issued_at)->format('Y-m-d'),
-                'expires_at' => optional($rfidCard->expires_at)->format('Y-m-d'),
-            ],
-        ], 200);
+        return response()->json($result['response'], $result['http_status']);
     }
 
     /**
@@ -182,7 +96,6 @@ class RfidValidationController extends Controller
             'accessed_at' => now(),
         ]);
 
-        // Broadcast the event for real-time notifications
         broadcast(new RfidAccessAttempted($accessLog));
     }
 }

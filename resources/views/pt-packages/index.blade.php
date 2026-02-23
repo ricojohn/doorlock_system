@@ -82,18 +82,3 @@
     </div>
 </section>
 @endsection
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.delete-form').forEach(function(form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ title: 'Are you sure?', text: 'This package will be deleted.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc3545' }).then(function(r) { if (r.isConfirmed) form.submit(); });
-            } else { form.submit(); }
-        });
-    });
-});
-</script>
-@endpush

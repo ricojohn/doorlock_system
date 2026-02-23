@@ -10,5 +10,5 @@ Artisan::command('inspire', function () {
 
 // Schedule subscriptions expire to run every minute
 Schedule::command('subscriptions:expire')
-    ->everyMinute()
+    ->hourly()
     ->description('Expire subscriptions');

@@ -12,6 +12,7 @@ use App\Http\Controllers\PtPackageController;
 use App\Http\Controllers\PtSessionController;
 use App\Http\Controllers\PtSessionPlanController;
 use App\Http\Controllers\RfidCardController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\WifiConfigurationController;
 use Illuminate\Support\Facades\Route;
@@ -61,4 +62,7 @@ Route::middleware('auth')->group(function (): void {
 
     Route::resource('pt-session-plans', PtSessionPlanController::class);
     Route::resource('pt-packages', PtPackageController::class);
+
+    Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
+    Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
 });

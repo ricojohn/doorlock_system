@@ -1,17 +1,47 @@
+@php
+  $appSettings = $appSettings ?? \App\Models\Setting::getCached();
+  $themeMode = $appSettings['theme_mode'] ?? 'light';
+  $primaryColor = $appSettings['primary_color'] ?? '#4154f1';
+  $faviconUrl = !empty($appSettings['favicon_path']) ? asset('storage/'.$appSettings['favicon_path']) : asset('assets/img/favicon.png');
+  $appleTouchUrl = !empty($appSettings['logo_path']) ? asset('storage/'.$appSettings['logo_path']) : asset('assets/img/apple-touch-icon.png');
+  $hex = ltrim($primaryColor, '#');
+  if (strlen($hex) === 3) { $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2]; }
+  $primaryRgb = strlen($hex) >= 6 ? hexdec(substr($hex,0,2)).', '.hexdec(substr($hex,2,2)).', '.hexdec(substr($hex,4,2)) : '65, 84, 241';
+@endphp
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="theme-{{ $themeMode }}" data-theme="{{ $themeMode }}">
 
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta name="color-scheme" content="{{ $themeMode === 'dark' ? 'dark' : ($themeMode === 'light' ? 'light' : 'light dark') }}">
 
-  <title>Dashboard - NiceAdmin Bootstrap Template</title>
+  <title>@yield('title', $appSettings['app_name'] ?? config('app.name'))</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
-  <link href="{{ asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+  <link href="{{ $faviconUrl }}" rel="icon">
+  <link href="{{ $appleTouchUrl }}" rel="apple-touch-icon">
+
+  {{-- Primary color & theme from settings --}}
+  <style>
+    :root { --app-primary: {{ $primaryColor }}; --bs-primary: {{ $primaryColor }}; --bs-primary-rgb: {{ $primaryRgb }}; }
+    .theme-dark body { background-color: #1a1d20; color: #e4e6eb; }
+    .theme-dark .card { background-color: #242628; border-color: #3e4042; color: #e4e6eb; }
+    .theme-dark .sidebar { background-color: #242628; }
+    .theme-dark .header { background-color: #242628; border-color: #3e4042; }
+  </style>
+  <script>
+    (function() {
+      var html = document.documentElement;
+      if (html.getAttribute('data-theme') === 'system') {
+        var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        html.classList.remove('theme-light', 'theme-dark', 'theme-system');
+        html.classList.add(dark ? 'theme-dark' : 'theme-light');
+      }
+    })();
+  </script>
 
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -94,7 +124,7 @@
         icon: 'success',
         title: 'Success!',
         text: '{{ session('success') }}',
-        confirmButtonColor: '#4154f1',
+        confirmButtonColor: '{{ $primaryColor }}',
         timer: 3000,
         timerProgressBar: true
       });
@@ -140,7 +170,7 @@
         icon: 'success',
         title: 'Success!',
         text: '{{ session('status') }}',
-        confirmButtonColor: '#4154f1',
+        confirmButtonColor: '{{ $primaryColor }}',
         timer: 3000,
         timerProgressBar: true
       });
@@ -157,6 +187,30 @@
       });
     </script>
   @endif
+
+  {{-- Global delete confirmation (binds to .delete-form) --}}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.delete-form').forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          var formEl = this;
+          Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+          }).then(function(result) {
+            if (result.isConfirmed) formEl.submit();
+          });
+        });
+      });
+    });
+  </script>
 
   @stack('scripts')
 
@@ -177,9 +231,10 @@
       // Subscribe to the RFID access channel
       const channel = pusher.subscribe('rfid-access');
 
-      // Listen for access attempts
+      // Listen for access attempts: toast + navbar dropdown
       channel.bind('access.attempted', function(data) {
         showNotification(data);
+        appendAccessToNavBar(data);
       });
 
       function showNotification(data) {
@@ -227,6 +282,31 @@
         // You can add audio files for notifications
         // const audio = new Audio(`/sounds/${type}.mp3`);
         // audio.play().catch(e => console.log('Audio play failed:', e));
+      }
+
+      function appendAccessToNavBar(data) {
+        var list = document.getElementById('nav-access-log-list');
+        var badge = document.getElementById('nav-access-badge');
+        if (!list || !badge) return;
+        var empty = list.querySelector('.notification-item-empty');
+        if (empty) empty.remove();
+        var isGranted = data.access_granted === 'granted';
+        var iconClass = isGranted ? 'bi-check-circle text-success' : 'bi-x-circle text-danger';
+        var name = data.member_name || 'Unknown';
+        var reason = data.reason || '';
+        var timeLabel = 'Just now';
+        var li = document.createElement('li');
+        li.className = 'notification-item d-flex align-items-start gap-2 py-2 px-3';
+        li.innerHTML = '<i class="bi ' + iconClass + ' flex-shrink-0 mt-1"></i><div class="flex-grow-1 min-w-0"><h4 class="mb-0 small fw-semibold">' + escapeHtml(name) + '</h4><p class="mb-0 small">' + escapeHtml(reason) + '</p><p class="mb-0 small text-muted">' + timeLabel + '</p></div>';
+        list.insertBefore(li, list.firstChild);
+        var n = list.querySelectorAll('.notification-item').length;
+        badge.textContent = n;
+      }
+
+      function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
       }
 
       // Log connection status

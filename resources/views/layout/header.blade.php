@@ -1,8 +1,14 @@
+@php
+  $appSettings = $appSettings ?? \App\Models\Setting::getCached();
+  $logoUrl = !empty($appSettings['logo_path']) ? asset('storage/'.$appSettings['logo_path']) : asset('assets/img/logo.png');
+  $appName = $appSettings['app_name'] ?? config('app.name');
+  $recentAccessLogsForNav = $recentAccessLogsForNav ?? collect();
+@endphp
 <header id="header" class="header fixed-top d-flex align-items-center">
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
-        <img src="assets/img/logo.png" alt="">
-        <span class="d-none d-lg-block">NiceAdmin</span>
+      <a href="{{ route('home') }}" class="logo d-flex align-items-center">
+        <img src="{{ $logoUrl }}" alt="{{ $appName }}">
+        <span class="d-none d-lg-block">{{ $appName }}</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div>
@@ -27,63 +33,46 @@
         <li class="nav-item dropdown">
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-bell"></i>
-            <span class="badge bg-primary badge-number">4</span>
+            <span class="badge bg-primary badge-number" id="nav-access-badge">{{ $recentAccessLogsForNav->count() }}</span>
           </a>
           <!-- End Notification Icon -->
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-            <li class="dropdown-header"> You have 4 new notifications <a href="#">
+            <li class="dropdown-header">
+              Recent access <a href="{{ route('access-logs.index') }}">
                 <span class="badge rounded-pill bg-primary p-2 ms-2">View all</span>
               </a>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
-            <li class="notification-item">
-              <i class="bi bi-exclamation-circle text-warning"></i>
-              <div>
-                <h4>Lorem Ipsum</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>30 min. ago</p>
-              </div>
-            </li>
             <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="notification-item">
-              <i class="bi bi-x-circle text-danger"></i>
-              <div>
-                <h4>Atque rerum nesciunt</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>1 hr. ago</p>
-              </div>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="notification-item">
-              <i class="bi bi-check-circle text-success"></i>
-              <div>
-                <h4>Sit rerum fuga</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>2 hrs. ago</p>
-              </div>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="notification-item">
-              <i class="bi bi-info-circle text-primary"></i>
-              <div>
-                <h4>Dicta reprehenderit</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>4 hrs. ago</p>
-              </div>
+              <ul id="nav-access-log-list" class="list-unstyled mb-0 ps-0">
+                @forelse ($recentAccessLogsForNav as $log)
+                  <li class="notification-item d-flex align-items-start gap-2 py-2 px-3">
+                    @if ($log->access_granted === 'granted')
+                      <i class="bi bi-check-circle text-success flex-shrink-0 mt-1"></i>
+                    @else
+                      <i class="bi bi-x-circle text-danger flex-shrink-0 mt-1"></i>
+                    @endif
+                    <div class="flex-grow-1 min-w-0">
+                      <h4 class="mb-0 small fw-semibold">{{ $log->member_name ?? $log->member?->full_name ?? 'Unknown' }}</h4>
+                      <p class="mb-0 small">{{ $log->reason }}</p>
+                      <p class="mb-0 small text-muted">{{ $log->accessed_at->diffForHumans() }}</p>
+                    </div>
+                  </li>
+                @empty
+                  <li class="notification-item notification-item-empty d-flex align-items-start gap-2 py-2 px-3" data-empty="1">
+                    <i class="bi bi-inbox text-muted flex-shrink-0"></i>
+                    <p class="mb-0 text-muted small">No access logs yet.</p>
+                  </li>
+                @endforelse
+              </ul>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
             <li class="dropdown-footer">
-              <a href="#">Show all notifications</a>
+              <a href="{{ route('access-logs.index') }}">Show all access logs</a>
             </li>
           </ul>
           <!-- End Notification Dropdown Items -->

@@ -121,43 +121,5 @@
 @endsection
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var exerciseCount = {{ count(old('exercises', $ptPackage->exercises)) }};
-    function exerciseHtml(i) {
-        return '<div class="border rounded p-3 mb-3 exercise-item"><div class="d-flex justify-content-between mb-2"><strong>Exercise #' + (i+1) + '</strong><button type="button" class="btn btn-sm btn-danger remove-exercise">Remove</button></div>' +
-            '<div class="row g-2"><div class="col-md-6"><label class="form-label">Exercise Name</label><input type="text" name="exercises[' + i + '][exercise_name]" class="form-control"></div>' +
-            '<div class="col-md-2"><label class="form-label">Sets</label><input type="number" min="0" name="exercises[' + i + '][sets]" class="form-control"></div>' +
-            '<div class="col-md-2"><label class="form-label">Reps</label><input type="number" min="0" name="exercises[' + i + '][reps]" class="form-control"></div>' +
-            '<div class="col-md-2"><label class="form-label">Weight</label><input type="number" step="0.01" min="0" name="exercises[' + i + '][weight]" class="form-control"></div>' +
-            '<div class="col-md-3"><label class="form-label">Duration (min)</label><input type="number" min="0" name="exercises[' + i + '][duration_minutes]" class="form-control"></div>' +
-            '<div class="col-md-3"><label class="form-label">Rest (sec)</label><input type="number" min="0" name="exercises[' + i + '][rest_period_seconds]" class="form-control"></div>' +
-            '<div class="col-md-6"><label class="form-label">Notes</label><input type="text" name="exercises[' + i + '][notes]" class="form-control"></div></div></div>';
-    }
-    function updateRatePerSession() {
-        var rate = parseFloat(document.getElementById('package_rate').value) || 0;
-        var count = parseInt(document.getElementById('session_count').value, 10) || 1;
-        var rps = document.getElementById('rate_per_session');
-        if (count > 0 && rps && !rps.dataset.manual) rps.value = (rate / count).toFixed(2);
-    }
-    function updateCommissionPerSession() {
-        var rps = parseFloat(document.getElementById('rate_per_session').value) || 0;
-        var pct = parseFloat(document.getElementById('commission_percentage').value) || 0;
-        var cps = document.getElementById('commission_per_session');
-        if (cps && !cps.dataset.manual) cps.value = (rps * pct / 100).toFixed(2);
-    }
-    document.getElementById('package_rate').addEventListener('input', function() { updateRatePerSession(); updateCommissionPerSession(); });
-    document.getElementById('session_count').addEventListener('input', function() { updateRatePerSession(); updateCommissionPerSession(); });
-    document.getElementById('rate_per_session').addEventListener('input', function() { this.dataset.manual = '1'; updateCommissionPerSession(); });
-    document.getElementById('commission_percentage').addEventListener('input', function() { updateCommissionPerSession(); });
-    document.getElementById('commission_per_session').addEventListener('input', function() { this.dataset.manual = '1'; });
-    document.getElementById('add-exercise').addEventListener('click', function() {
-        document.getElementById('exercises-container').insertAdjacentHTML('beforeend', exerciseHtml(exerciseCount));
-        exerciseCount++;
-    });
-    document.getElementById('exercises-container').addEventListener('click', function(e) {
-        if (e.target.closest('.remove-exercise')) e.target.closest('.exercise-item').remove();
-    });
-});
-</script>
+<script src="{{ asset('assets/js/pt-package-form.js') }}"></script>
 @endpush
