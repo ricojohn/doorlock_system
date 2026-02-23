@@ -166,9 +166,9 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
                         <h5 class="card-title mb-0">Member Details</h5>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 flex-wrap">
                             <a href="{{ route('members.subscribe-pt-package', $member) }}" class="btn btn-success btn-sm"><i class="bi bi-plus-circle"></i> Subscribe to PT Package</a>
                             @if($member->activeMemberPtPackage && $member->activeMemberPtPackage->remaining_sessions > 0)
                                 <a href="{{ route('members.log-pt-session', $member) }}" class="btn btn-primary btn-sm"><i class="bi bi-activity"></i> Log Session</a>
@@ -196,7 +196,7 @@
                                 <i class="bi bi-graph-up"></i> Reports & Analytics
                             </button>
                         </li>
-                    </ul>
+                    </ul>``
 
                     <!-- Main Tabs Content -->
                     <div class="tab-content pt-2" id="main-tab-content">
