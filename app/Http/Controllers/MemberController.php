@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateMemberRequest;
 use App\Models\Coach;
 use App\Models\Member;
 use App\Models\RfidCard;
+use App\Models\User;
 use App\Services\MemberProfileService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -31,8 +32,9 @@ class MemberController extends Controller
     {
         $coaches = Coach::with('user')->get()->sortBy('full_name');
         $members = Member::orderBy('first_name')->get();
+        $users = User::whereHas('roles')->orderBy('name')->get();
 
-        return view('members.create', compact('coaches', 'members'));
+        return view('members.create', compact('coaches', 'members', 'users'));
     }
 
     /**
@@ -63,6 +65,9 @@ class MemberController extends Controller
         } elseif ($request->filled('invited_by_member_id')) {
             $memberData['invited_by_type'] = \App\Models\Member::class;
             $memberData['invited_by_id'] = $request->input('invited_by_member_id');
+        } elseif ($request->filled('invited_by_user_id')) {
+            $memberData['invited_by_type'] = \App\Models\User::class;
+            $memberData['invited_by_id'] = $request->input('invited_by_user_id');
         }
 
         $member = Member::create(array_merge(
@@ -92,7 +97,12 @@ class MemberController extends Controller
      */
     public function edit(Member $member): View
     {
-        return view('members.edit', compact('member'));
+        $member->load('invitedBy');
+        $coaches = Coach::with('user')->get()->sortBy('full_name');
+        $members = Member::orderBy('first_name')->get();
+        $users = User::whereHas('roles')->orderBy('name')->get();
+
+        return view('members.edit', compact('member', 'coaches', 'members', 'users'));
     }
 
     /**
@@ -100,7 +110,24 @@ class MemberController extends Controller
      */
     public function update(UpdateMemberRequest $request, Member $member): RedirectResponse
     {
-        $member->update($request->validated());
+        $data = $request->validated();
+
+        if ($request->filled('invited_by_coach_id')) {
+            $data['invited_by_type'] = \App\Models\Coach::class;
+            $data['invited_by_id'] = $request->input('invited_by_coach_id');
+        } elseif ($request->filled('invited_by_member_id')) {
+            $data['invited_by_type'] = \App\Models\Member::class;
+            $data['invited_by_id'] = $request->input('invited_by_member_id');
+        } elseif ($request->filled('invited_by_user_id')) {
+            $data['invited_by_type'] = \App\Models\User::class;
+            $data['invited_by_id'] = $request->input('invited_by_user_id');
+        } else {
+            $data['invited_by_type'] = null;
+            $data['invited_by_id'] = null;
+        }
+
+        unset($data['invited_by_coach_id'], $data['invited_by_member_id'], $data['invited_by_user_id']);
+        $member->update($data);
 
         return redirect()->route('members.index')
             ->with('success', 'Member updated successfully.');

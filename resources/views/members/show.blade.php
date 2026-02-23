@@ -84,6 +84,9 @@
                                     @if ($member->invitedBy instanceof \App\Models\Coach)
                                         <a href="{{ route('coaches.show', $member->invitedBy) }}">{{ $member->invitedBy->full_name }}</a>
                                         <span class="badge bg-secondary">Coach</span>
+                                    @elseif ($member->invitedBy instanceof \App\Models\User)
+                                        <a href="{{ route('staff.show', $member->invitedBy) }}">{{ $member->invitedBy->full_name }}</a>
+                                        <span class="badge bg-info">Frontdesk</span>
                                     @else
                                         <a href="{{ route('members.show', $member->invitedBy) }}">{{ $member->invitedBy->full_name }}</a>
                                         <span class="badge bg-secondary">Member</span>

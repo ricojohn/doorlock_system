@@ -51,6 +51,7 @@
                             <select name="inviter_type" id="inviter_type" class="form-select @error('inviter_type') is-invalid @enderror" required>
                                 <option value="App\Models\Coach" @selected(old('inviter_type') === 'App\Models\Coach')>Coach</option>
                                 <option value="App\Models\Member" @selected(old('inviter_type') === 'App\Models\Member')>Member</option>
+                                <option value="App\Models\User" @selected(old('inviter_type') === 'App\Models\User')>Frontdesk</option>
                             </select>
                             @error('inviter_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
@@ -63,6 +64,9 @@
                                 @endforeach
                                 @foreach ($members as $m)
                                     <option value="{{ $m->id }}" data-type="App\Models\Member" @selected(old('inviter_id') == $m->id && old('inviter_type') === 'App\Models\Member')>{{ $m->full_name }}</option>
+                                @endforeach
+                                @foreach(($users ?? []) as $u)
+                                    <option value="{{ $u->id }}" data-type="App\Models\User" @selected(old('inviter_id') == $u->id && old('inviter_type') === 'App\Models\User')>{{ $u->full_name }}</option>
                                 @endforeach
                             </select>
                             @error('inviter_id')<div class="invalid-feedback">{{ $message }}</div>@enderror

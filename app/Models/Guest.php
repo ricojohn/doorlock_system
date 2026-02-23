@@ -25,7 +25,7 @@ class Guest extends Model
     ];
 
     /**
-     * Get the inviter (Coach or Member).
+     * Get the inviter (Coach, Member, or User/frontdesk).
      */
     public function inviter(): MorphTo
     {

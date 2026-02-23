@@ -126,6 +126,16 @@
                             </select>
                             @error('invited_by_member_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Invited by frontdesk</label>
+                            <select name="invited_by_user_id" class="form-select @error('invited_by_user_id') is-invalid @enderror">
+                                <option value="">None</option>
+                                @foreach(($users ?? []) as $u)
+                                    <option value="{{ $u->id }}" @selected(old('invited_by_user_id') == $u->id)>{{ $u->full_name }}</option>
+                                @endforeach
+                            </select>
+                            @error('invited_by_user_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
 
                         <!-- Additional Information Section -->
                         <div class="col-12 mt-4">

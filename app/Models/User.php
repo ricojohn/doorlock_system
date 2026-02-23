@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -65,5 +66,21 @@ class User extends Authenticatable
     public function coach(): HasOne
     {
         return $this->hasOne(Coach::class);
+    }
+
+    /**
+     * Get the guests invited by this user (frontdesk).
+     */
+    public function invitedGuests(): MorphMany
+    {
+        return $this->morphMany(Guest::class, 'inviter');
+    }
+
+    /**
+     * Get the members invited by this user (frontdesk) when converting a guest.
+     */
+    public function invitedMembers(): MorphMany
+    {
+        return $this->morphMany(Member::class, 'invitedBy');
     }
 }

@@ -40,6 +40,9 @@ class UpdateMemberRequest extends FormRequest
             'state' => ['nullable', 'string', 'max:255'],
             'postal_code' => ['nullable', 'string', 'max:255'],
             'country' => ['nullable', 'string', 'max:255'],
+            'invited_by_coach_id' => ['nullable', 'integer', 'exists:coaches,id'],
+            'invited_by_member_id' => ['nullable', 'integer', 'exists:members,id'],
+            'invited_by_user_id' => ['nullable', 'integer', 'exists:users,id'],
         ];
     }
 

@@ -42,7 +42,7 @@
                         <dt class="col-sm-3">Invited by</dt>
                         <dd class="col-sm-9">
                             @if ($guest->inviter)
-                                {{ class_basename($guest->inviter_type) }}: {{ $guest->inviter->full_name }}
+                                {{ $guest->inviter_type === 'App\Models\User' ? 'Frontdesk' : class_basename($guest->inviter_type) }}: {{ $guest->inviter->full_name }}
                             @else
                                 —
                             @endif

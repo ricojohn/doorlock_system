@@ -54,7 +54,7 @@
                                         <td>{{ $guest->email }}</td>
                                         <td>
                                             @if ($guest->inviter)
-                                                {{ class_basename($guest->inviter_type) }}: {{ $guest->inviter->full_name }}
+                                                {{ $guest->inviter_type === 'App\Models\User' ? 'Frontdesk' : class_basename($guest->inviter_type) }}: {{ $guest->inviter->full_name }}
                                             @else
                                                 N/A
                                             @endif

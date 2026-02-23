@@ -101,6 +101,48 @@
                             @enderror
                         </div>
 
+                        <!-- Optional: Who invited / referred this member -->
+                        <div class="col-12 mt-4">
+                            <h6 class="text-primary border-bottom pb-2 mb-3">
+                                <i class="bi bi-person-plus"></i> Who invited them (optional)
+                            </h6>
+                        </div>
+                        @php
+                            $invitedByCoach = $member->invitedBy instanceof \App\Models\Coach;
+                            $invitedByMember = $member->invitedBy instanceof \App\Models\Member;
+                            $invitedByUser = $member->invitedBy instanceof \App\Models\User;
+                        @endphp
+                        <div class="col-md-4">
+                            <label class="form-label">Invited by coach</label>
+                            <select name="invited_by_coach_id" class="form-select @error('invited_by_coach_id') is-invalid @enderror">
+                                <option value="">None</option>
+                                @foreach ($coaches ?? [] as $c)
+                                    <option value="{{ $c->id }}" @selected(old('invited_by_coach_id', $invitedByCoach ? $member->invited_by_id : null) == $c->id)>{{ $c->full_name }}</option>
+                                @endforeach
+                            </select>
+                            @error('invited_by_coach_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Invited by member</label>
+                            <select name="invited_by_member_id" class="form-select @error('invited_by_member_id') is-invalid @enderror">
+                                <option value="">None</option>
+                                @foreach ($members ?? [] as $m)
+                                    <option value="{{ $m->id }}" @selected(old('invited_by_member_id', $invitedByMember ? $member->invited_by_id : null) == $m->id)>{{ $m->full_name }}</option>
+                                @endforeach
+                            </select>
+                            @error('invited_by_member_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Invited by frontdesk</label>
+                            <select name="invited_by_user_id" class="form-select @error('invited_by_user_id') is-invalid @enderror">
+                                <option value="">None</option>
+                                @foreach(($users ?? []) as $u)
+                                    <option value="{{ $u->id }}" @selected(old('invited_by_user_id', $invitedByUser ? $member->invited_by_id : null) == $u->id)>{{ $u->full_name }}</option>
+                                @endforeach
+                            </select>
+                            @error('invited_by_user_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+
                         <!-- Additional Information Section -->
                         <div class="col-12 mt-4">
                             <h6 class="text-primary border-bottom pb-2 mb-3">

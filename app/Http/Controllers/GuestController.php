@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateGuestRequest;
 use App\Models\Coach;
 use App\Models\Guest;
 use App\Models\Member;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -24,8 +25,9 @@ class GuestController extends Controller
     {
         $coaches = Coach::with('user')->get()->sortBy('full_name');
         $members = Member::orderBy('first_name')->get();
+        $users = User::whereHas('roles')->orderBy('name')->get();
 
-        return view('guests.create', compact('coaches', 'members'));
+        return view('guests.create', compact('coaches', 'members', 'users'));
     }
 
     public function store(StoreGuestRequest $request): RedirectResponse
@@ -54,8 +56,9 @@ class GuestController extends Controller
         $guest->load('inviter');
         $coaches = Coach::with('user')->get()->sortBy('full_name');
         $members = Member::orderBy('first_name')->get();
+        $users = User::whereHas('roles')->orderBy('name')->get();
 
-        return view('guests.edit', compact('guest', 'coaches', 'members'));
+        return view('guests.edit', compact('guest', 'coaches', 'members', 'users'));
     }
 
     public function update(UpdateGuestRequest $request, Guest $guest): RedirectResponse

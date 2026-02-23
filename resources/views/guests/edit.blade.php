@@ -50,6 +50,7 @@
                             <select name="inviter_type" id="inviter_type" class="form-select" required>
                                 <option value="App\Models\Coach" @selected($guest->inviter_type === 'App\Models\Coach')>Coach</option>
                                 <option value="App\Models\Member" @selected($guest->inviter_type === 'App\Models\Member')>Member</option>
+                                <option value="App\Models\User" @selected($guest->inviter_type === 'App\Models\User')>Frontdesk</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -61,6 +62,9 @@
                                 @endforeach
                                 @foreach ($members as $m)
                                     <option value="{{ $m->id }}" data-type="App\Models\Member" @selected($guest->inviter_id == $m->id && $guest->inviter_type === 'App\Models\Member')>{{ $m->full_name }}</option>
+                                @endforeach
+                                @foreach(($users ?? []) as $u)
+                                    <option value="{{ $u->id }}" data-type="App\Models\User" @selected($guest->inviter_id == $u->id && $guest->inviter_type === 'App\Models\User')>{{ $u->full_name }}</option>
                                 @endforeach
                             </select>
                             @error('inviter_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
