@@ -60,6 +60,11 @@ class MemberPtPackage extends Model
         return $this->hasMany(PtSession::class);
     }
 
+    public function commissions(): HasMany
+    {
+        return $this->hasMany(Commission::class);
+    }
+
     public function getSessionsUsedAttribute(): int
     {
         return (int) $this->ptSessions()->sum('sessions_used');

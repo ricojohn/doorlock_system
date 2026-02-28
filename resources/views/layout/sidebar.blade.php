@@ -67,6 +67,21 @@
       </li><!-- End Subscriptions Nav -->
       @endcan
 
+      @can('manage_expenses')
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('expenses.*') ? '' : 'collapsed' }}" href="{{ route('expenses.index') }}">
+          <i class="bi bi-cash-stack"></i>
+          <span>Expenses</span>
+        </a>
+      </li><!-- End Expenses Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('finance.gross-dashboard') ? '' : 'collapsed' }}" href="{{ route('finance.gross-dashboard') }}">
+          <i class="bi bi-bar-chart-line"></i>
+          <span>Gross vs Expenses</span>
+        </a>
+      </li><!-- End Gross vs Expenses Nav -->
+      @endcan
+
       
 
       {{-- <li class="nav-item">
@@ -83,6 +98,12 @@
           <span>PT Packages</span>
         </a>
       </li><!-- End PT Packages Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('member-pt-packages.*') ? '' : 'collapsed' }}" href="{{ route('member-pt-packages.index') }}">
+          <i class="bi bi-people-fill"></i>
+          <span>PT Package Subscriptions</span>
+        </a>
+      </li><!-- End PT Package Subscriptions Nav -->
       @endcan
 
       @can('manage_rfid_cards')
@@ -102,6 +123,15 @@
         </a>
       </li><!-- End Access Logs Nav -->
       @endcan
+
+      {{-- @can('control_door') --}}
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('door-control.*') ? '' : 'collapsed' }}" href="{{ route('door-control.index') }}">
+          <i class="bi bi-key"></i>
+          <span>Door Control</span>
+        </a>
+      </li><!-- End Door Control Nav -->
+      {{-- @endcan --}}
 
       @can('manage_settings')
       <li class="nav-item">

@@ -37,6 +37,10 @@ String wifiPassword = "";
 #define LED_SUCCESS_PIN 4
 #define LED_ERROR_PIN 5
 
+// Poll admin "open door" command every 1.5 seconds
+#define DOOR_COMMAND_POLL_MS 1500
+unsigned long lastDoorCommandPoll = 0;
+
 void setup() {
   Serial.begin(115200);
   delay(1000);
@@ -151,6 +155,12 @@ void loop() {
     }
   }
 
+  // Check for remote "open door" command from admin panel (main door only)
+  if (WiFi.status() == WL_CONNECTED && (millis() - lastDoorCommandPoll >= DOOR_COMMAND_POLL_MS)) {
+    lastDoorCommandPoll = millis();
+    checkRemoteDoorCommand();
+  }
+
   // Read RFID card (implement your RFID reading logic here)
   String cardNumber = readRFID();
   
@@ -237,6 +247,41 @@ void testAPIConnection() {
     digitalWrite(LED_ERROR_PIN, HIGH);
   }
   
+  http.end();
+}
+
+/**
+ * Poll API for remote "open door" command (admin panel - main door only).
+ * When open is requested, unlocks for 2 seconds then re-locks.
+ */
+void checkRemoteDoorCommand() {
+  HTTPClient http;
+  String url = String(apiUrl) + "/door/command";
+
+  http.begin(url);
+  http.addHeader("X-API-Token", apiToken);
+
+  int httpResponseCode = http.GET();
+
+  if (httpResponseCode == 200) {
+    String response = http.getString();
+    DynamicJsonDocument doc(128);
+    DeserializationError error = deserializeJson(doc, response);
+
+    if (!error && doc["open"] == true) {
+      Serial.println("=== REMOTE OPEN (Main Door) ===");
+
+      digitalWrite(DOOR_LOCK_PIN, HIGH);
+      digitalWrite(LED_SUCCESS_PIN, HIGH);
+      digitalWrite(LED_ERROR_PIN, LOW);
+
+      delay(2000);
+
+      digitalWrite(DOOR_LOCK_PIN, LOW);
+      digitalWrite(LED_SUCCESS_PIN, LOW);
+    }
+  }
+
   http.end();
 }
 

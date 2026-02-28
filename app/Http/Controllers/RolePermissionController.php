@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePermissionRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -18,7 +19,28 @@ class RolePermissionController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('roles-permissions.index', compact('roles'));
+        $permissions = Permission::where('guard_name', 'web')->orderBy('name')->get();
+
+        return view('roles-permissions.index', compact('roles', 'permissions'));
+    }
+
+    public function createPermission(): View
+    {
+        return view('roles-permissions.permissions.create');
+    }
+
+    public function storePermission(StorePermissionRequest $request): RedirectResponse
+    {
+        Permission::create([
+            'name' => $request->validated('name'),
+            'guard_name' => 'web',
+        ]);
+
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
+        return redirect()
+            ->route('roles-permissions.index')
+            ->with('success', 'Permission created successfully. You can now assign it to roles.');
     }
 
     public function edit(Role $role): View

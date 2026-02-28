@@ -13,4 +13,7 @@ Route::middleware('api.token')->group(function (): void {
 
     // WiFi configuration endpoint
     Route::get('/wifi-config', [RfidValidationController::class, 'getWifiConfig'])->name('api.wifi-config');
+
+    // Door command (ESP32 polls this; when open requested, returns open then clears)
+    Route::get('/door/command', [RfidValidationController::class, 'getDoorCommand'])->name('api.door.command');
 });

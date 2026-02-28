@@ -17,8 +17,15 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Roles</h5>
-                    <p class="text-muted small">Assign permissions to each role. Users with a role get the permissions assigned to that role.</p>
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <h5 class="card-title mb-0">Roles</h5>
+                            <p class="text-muted small mb-0">Assign permissions to each role. Users with a role get the permissions assigned to that role.</p>
+                        </div>
+                        <a href="{{ route('roles-permissions.permissions.create') }}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus-circle"></i> Create permission
+                        </a>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <thead>
@@ -49,6 +56,20 @@
                     </div>
                 </div>
             </div>
+
+            @if ($permissions->isNotEmpty())
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">All permissions</h5>
+                    <p class="text-muted small">These permissions can be assigned to roles above.</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach ($permissions as $permission)
+                            <span class="badge bg-secondary">{{ str_replace('_', ' ', $permission->name) }}</span>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </section>

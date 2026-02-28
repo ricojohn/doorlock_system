@@ -4,12 +4,13 @@ use App\Http\Controllers\AccessLogController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Models\User;
 use App\Http\Controllers\CoachController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DoorControlController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\GrossDashboardController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\MemberController;
-use App\Http\Controllers\StaffController;
 use App\Http\Controllers\MemberPtPackageController;
 use App\Http\Controllers\PtPackageController;
 use App\Http\Controllers\PtSessionController;
@@ -17,8 +18,10 @@ use App\Http\Controllers\PtSessionPlanController;
 use App\Http\Controllers\RfidCardController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\WifiConfigurationController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 // Bind 'staff' route parameter to User model
@@ -78,6 +81,7 @@ Route::middleware('auth')->group(function (): void {
 
     Route::middleware('permission:manage_pt_packages')->group(function (): void {
         Route::resource('pt-packages', PtPackageController::class);
+        Route::resource('member-pt-packages', MemberPtPackageController::class)->only(['index', 'show']);
     });
 
     Route::middleware('permission:manage_pt_session_plans')->group(function (): void {
@@ -88,9 +92,19 @@ Route::middleware('auth')->group(function (): void {
         Route::resource('rfid-cards', RfidCardController::class);
     });
 
+    Route::middleware('permission:manage_expenses')->group(function (): void {
+        Route::resource('expenses', ExpenseController::class)->except(['show']);
+        Route::get('finance/gross-vs-expenses', [GrossDashboardController::class, 'index'])->name('finance.gross-dashboard');
+    });
+
     Route::middleware('permission:view_access_logs')->group(function (): void {
         Route::get('access-logs/recent', [AccessLogController::class, 'recent'])->name('access-logs.recent');
         Route::resource('access-logs', AccessLogController::class)->only(['index']);
+    });
+
+    Route::middleware('permission:control_door')->group(function (): void {
+        Route::get('door-control', [DoorControlController::class, 'index'])->name('door-control.index');
+        Route::post('door-control/open', [DoorControlController::class, 'open'])->name('door-control.open');
     });
 
     Route::middleware('permission:manage_wifi_configurations')->group(function (): void {
@@ -104,6 +118,8 @@ Route::middleware('auth')->group(function (): void {
 
     Route::middleware('permission:manage_roles')->group(function (): void {
         Route::get('roles-permissions', [RolePermissionController::class, 'index'])->name('roles-permissions.index');
+        Route::get('roles-permissions/permissions/create', [RolePermissionController::class, 'createPermission'])->name('roles-permissions.permissions.create');
+        Route::post('roles-permissions/permissions', [RolePermissionController::class, 'storePermission'])->name('roles-permissions.permissions.store');
         Route::get('roles-permissions/{role}/edit', [RolePermissionController::class, 'edit'])->name('roles-permissions.edit');
         Route::put('roles-permissions/{role}', [RolePermissionController::class, 'update'])->name('roles-permissions.update');
     });

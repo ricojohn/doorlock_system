@@ -41,7 +41,7 @@ class PtSessionController extends Controller
                 ->with('error', 'Not enough remaining sessions or package is not active.');
         }
 
-        PtSession::create([
+        $ptSession = PtSession::create([
             'member_pt_package_id' => $mpp->id,
             'conducted_at' => $request->validated('conducted_at'),
             'sessions_used' => $request->validated('sessions_used'),

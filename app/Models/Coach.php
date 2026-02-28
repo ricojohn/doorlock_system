@@ -94,6 +94,14 @@ class Coach extends Model
     }
 
     /**
+     * Get the commissions earned by this coach.
+     */
+    public function commissions(): HasMany
+    {
+        return $this->hasMany(Commission::class);
+    }
+
+    /**
      * Get the guests invited by this coach.
      */
     public function invitedGuests(): MorphMany

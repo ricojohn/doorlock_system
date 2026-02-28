@@ -9,6 +9,7 @@ use App\Models\WifiConfiguration;
 use App\Services\RfidAccessPolicy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class RfidValidationController extends Controller
 {
@@ -48,6 +49,20 @@ class RfidValidationController extends Controller
             'status' => 'ok',
             'message' => 'API is running',
             'timestamp' => now()->toIso8601String(),
+        ], 200);
+    }
+
+    /**
+     * Door command for ESP32 (main door only). ESP32 polls this; when open was requested
+     * from the admin panel, returns open: true once then clears the command.
+     */
+    public function getDoorCommand(): JsonResponse
+    {
+        $key = 'door_open_main';
+        $open = Cache::pull($key) === true;
+
+        return response()->json([
+            'open' => $open,
         ], 200);
     }
 

@@ -25,6 +25,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'manage_pt_session_plans',
             'manage_rfid_cards',
             'view_access_logs',
+            'control_door',
+            'manage_expenses',
             'manage_settings',
             'manage_wifi_configurations',
             'manage_roles',
@@ -53,6 +55,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'manage_subscriptions',
             'manage_rfid_cards',
             'view_access_logs',
+            'control_door',
+            'manage_expenses',
         ]);
     }
 }
